@@ -17,7 +17,6 @@ import { Application, type View } from '@nativescript/core'
 import innet, { createHandler, useApp } from 'innet'
 import { type Observable } from 'watch-state'
 
-import { type HideProps, type PortalProps, type ShowProps } from '../components'
 import {
   nativeAsync,
   nativeFn,
@@ -184,9 +183,6 @@ declare global {
       label: LabelProps
       frame: FrameProps
       fragment: FragmentProps
-      portal: PortalProps
-      show: ShowProps
-      hide: HideProps
       image: ImageProps
       'navigation-button': NavigationButtonProps
       'activity-indicator': ActivityIndicatorProps

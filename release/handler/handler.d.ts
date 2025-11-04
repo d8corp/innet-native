@@ -2,7 +2,6 @@ import { type JSXElement } from '@innet/jsx';
 import { arraySync } from '@innet/utils';
 import { type View } from '@nativescript/core';
 import { type Observable } from 'watch-state';
-import { type HideProps, type PortalProps, type ShowProps } from '../components';
 import { nativeAsync, nativeFn, nativeNode, nativeText } from '../plugins';
 import { type AbsoluteLayoutProps, type ActionBarProps, type ActionItemProps, type ActivityIndicatorProps, type ButtonProps, type DatePickerProps, type DockLayoutProps, type FlexboxLayoutProps, type FormattedStringProps, type FragmentProps, type FrameProps, type GridLayoutProps, type HtmlViewProps, type ImageProps, type LabelProps, type ListPickerProps, type ListViewProps, type NavigationButtonProps, type PageProps, type PlaceholderProps, type ProgressProps, type RootLayoutProps, type ScrollViewProps, type SearchBarProps, type SegmentedBarItemProps, type SegmentedBarProps, type SliderProps, type SpanProps, type StackLayoutProps, type SwitchProps, type TabViewItemProps, type TabViewProps, type TextFieldProps, type TextViewProps, type TimePickerProps, type WebViewProps, type WrapLayoutProps } from '../types';
 export declare const arrayPlugins: (typeof arraySync)[];
@@ -42,9 +41,6 @@ declare global {
             label: LabelProps;
             frame: FrameProps;
             fragment: FragmentProps;
-            portal: PortalProps;
-            show: ShowProps;
-            hide: HideProps;
             image: ImageProps;
             'navigation-button': NavigationButtonProps;
             'activity-indicator': ActivityIndicatorProps;
