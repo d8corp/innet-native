@@ -1,0 +1,15 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const PARENT = Symbol('parent');
+const FOR_VALUE = Symbol('FOR_VALUE');
+const FOR_INDEX = Symbol('FOR_INDEX');
+const FOR_WATCHER_KEY = Symbol('FOR_WATCHER_KEY');
+const PARENT_FRAME = Symbol('PARENT_FRAME');
+
+exports.FOR_INDEX = FOR_INDEX;
+exports.FOR_VALUE = FOR_VALUE;
+exports.FOR_WATCHER_KEY = FOR_WATCHER_KEY;
+exports.PARENT = PARENT;
+exports.PARENT_FRAME = PARENT_FRAME;

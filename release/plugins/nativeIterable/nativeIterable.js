@@ -1,0 +1,78 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var tslib = require('tslib');
+var jsx = require('@innet/jsx');
+var utils = require('@innet/utils');
+var innet = require('innet');
+var watchState = require('watch-state');
+require('../../hooks/index.js');
+var useView = require('../../hooks/useView/useView.js');
+var useChildrenHandler = require('../../hooks/useChildrenHandler/useChildrenHandler.js');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var innet__default = /*#__PURE__*/_interopDefaultLegacy(innet);
+
+const nativeIterable = () => () => {
+    const genericComponent = innet.useApp();
+    if (!(genericComponent instanceof jsx.GenericComponent))
+        return innet.NEXT;
+    const handler = innet.useHandler();
+    const { app: apps, data } = genericComponent;
+    if (!(data instanceof Promise)) {
+        innet__default["default"](data.value, handler);
+        innet__default["default"](() => genericComponent.app.next(), utils.callHandler);
+        return;
+    }
+    const fragment = useView.useView('fragment');
+    const childrenHandler = useChildrenHandler.useChildrenHandler(fragment);
+    const { activeWatcher } = watchState.scope;
+    let watcher;
+    let deleted = false;
+    innet__default["default"](fragment, handler);
+    watchState.onDestroy(() => {
+        deleted = true;
+    });
+    const call = (app) => {
+        watchState.scope.activeWatcher = activeWatcher;
+        if (watcher) {
+            watcher.destroy();
+            fragment.removeChildren();
+        }
+        watcher = new watchState.Watch(update => {
+            if (update) {
+                fragment.removeChildren();
+            }
+            innet__default["default"](app, childrenHandler);
+        });
+        watchState.scope.activeWatcher = undefined;
+    };
+    const run = () => tslib.__awaiter(void 0, void 0, void 0, function* () {
+        var _a, e_1, _b, _c;
+        try {
+            for (var _d = true, apps_1 = tslib.__asyncValues(apps), apps_1_1; apps_1_1 = yield apps_1.next(), _a = apps_1_1.done, !_a; _d = true) {
+                _c = apps_1_1.value;
+                _d = false;
+                const app = _c;
+                if (deleted)
+                    return;
+                call(app);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (!_d && !_a && (_b = apps_1.return)) yield _b.call(apps_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    });
+    data.then(({ value }) => {
+        call(value);
+        run();
+    });
+};
+
+exports.nativeIterable = nativeIterable;
