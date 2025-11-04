@@ -92,11 +92,12 @@ export function nativeNode (): HandlerPlugin {
 
     if (app instanceof TabViewItem) {
       if (parent instanceof TabView) {
-        if (!parent.items) {
-          parent.items = []
+        if (parent.items) {
+          parent.items = [...parent.items, app]
+        } else {
+          parent.items = [app]
         }
 
-        parent.items.push(app)
         return
       }
 

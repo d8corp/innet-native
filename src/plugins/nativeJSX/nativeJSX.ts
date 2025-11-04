@@ -84,8 +84,6 @@ export function nativeJSX (): HandlerPlugin {
       }
     }
 
-    innet(target, handler)
-
     if (children) {
       const childrenHandler = Object.create(handler)
 
@@ -96,5 +94,7 @@ export function nativeJSX (): HandlerPlugin {
       setParent(childrenHandler, target)
       innet(children, childrenHandler)
     }
+
+    innet(target, handler)
   }
 }
