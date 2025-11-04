@@ -14,7 +14,6 @@ var handler = require('./handler/handler.js');
 var Portal = require('./components/Portal/Portal.js');
 var Show = require('./components/Show/Show.js');
 var Hide = require('./components/Hide/Hide.js');
-var Navigate = require('./components/Navigate/Navigate.js');
 var For = require('./components/For/For.js');
 var useParent = require('./hooks/useParent/useParent.js');
 var useView = require('./hooks/useView/useView.js');
@@ -33,6 +32,7 @@ var setParent = require('./utils/setParent/setParent.js');
 var Fragment = require('./utils/Fragment/Fragment.js');
 var after = require('./utils/after/after.js');
 var before = require('./utils/before/before.js');
+var Page = require('./utils/Page/Page.js');
 
 
 
@@ -55,7 +55,6 @@ exports.stringPlugins = handler.stringPlugins;
 exports.Portal = Portal.Portal;
 exports.Show = Show.Show;
 exports.Hide = Hide.Hide;
-exports.Navigate = Navigate.Navigate;
 exports.For = For.For;
 exports.getForKey = For.getForKey;
 exports.useParent = useParent.useParent;
@@ -76,3 +75,4 @@ exports.setParent = setParent.setParent;
 exports.Fragment = Fragment.Fragment;
 exports.after = after.after;
 exports.before = before.before;
+exports.Page = Page.Page;

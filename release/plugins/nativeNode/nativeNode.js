@@ -7,7 +7,9 @@ var core = require('@nativescript/core');
 var innet = require('innet');
 var constants = require('../../constants.js');
 require('../../hooks/index.js');
+require('../../utils/index.js');
 var useParent = require('../../hooks/useParent/useParent.js');
+var Page = require('../../utils/Page/Page.js');
 
 function nativeNode() {
     return () => {
@@ -20,14 +22,13 @@ function nativeNode() {
             }
             throw Error('Unexpected element used as a root view');
         }
-        if (app instanceof core.Page) {
+        if (app instanceof Page.Page) {
             const handler = innet.useHandler();
             const frame = handler[constants.PARENT_FRAME];
-            const navigation = handler[constants.PARENT_NAVIGATE];
             if (!frame) {
                 throw Error('You can place <page> only in a <frame>');
             }
-            frame.navigate(Object.assign(Object.assign({}, navigation), { create: () => app }));
+            frame.navigate(Object.assign(Object.assign({}, app.navigation), { create: () => app }));
             return;
         }
         if (app instanceof core.Span) {
@@ -45,7 +46,7 @@ function nativeNode() {
             throw Error(`You can place <string> only in text based elements, current parent: ${parent.typeName}`);
         }
         if (app instanceof core.ActionBar) {
-            if (parent instanceof core.Page) {
+            if (parent instanceof Page.Page) {
                 parent.actionBar = app;
                 return;
             }

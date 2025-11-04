@@ -1,10 +1,10 @@
 import { type Ref } from '@innet/utils';
-import { type AbsoluteLayout, type ActionBar, type ActionItem, type ActivityIndicator, type Button, type Color, type ContentView, type CreateViewEventData, type DatePicker, type DockLayout, type EventData, type FlexboxLayout, type FormattedString, type Frame, type GridLayout, type HtmlView, type Image, type ItemEventData, type Label, type ListPicker, type ListView, type NavigationButton, type Observable as NativeObservable, type Page, type Placeholder, type Progress, type PropertyChangeData, type RootLayout, type ScrollEventData, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem, type Slider, type Span, type StackLayout, type Style as NativeStyle, type Switch, type TabView, type TabViewItem, type TextBase, type TextField, type TextView, type TimePicker, type View, type ViewBase, type WebView, type WrapLayout } from '@nativescript/core';
+import { type AbsoluteLayout, type ActionBar, type ActionItem, type ActivityIndicator, type Button, type Color, type ContentView, type CreateViewEventData, type DatePicker, type DockLayout, type EventData, type FlexboxLayout, type FormattedString, type Frame, type GridLayout, type HtmlView, type Image, type ItemEventData, type Label, type ListPicker, type ListView, type NavigationButton, type Observable as NativeObservable, type Placeholder, type Progress, type PropertyChangeData, type RootLayout, type ScrollEventData, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem, type Slider, type Span, type StackLayout, type Style as NativeStyle, type Switch, type TabView, type TabViewItem, type TextBase, type TextField, type TextView, type TimePicker, type View, type ViewBase, type WebView, type WrapLayout } from '@nativescript/core';
 import { type CoreTypes } from '@nativescript/core/core-types';
 import { type ItemsSource } from '@nativescript/core/ui/list-view';
 import { type SelectedIndexChangedEventData } from '@nativescript/core/ui/tab-view';
 import { type Observable, type Watcher } from 'watch-state';
-import { type Fragment } from './utils';
+import { type Fragment, type Page } from './utils';
 export type WatchProp<T> = T | Watcher<T>;
 export type StateProp<T> = WatchProp<T> | Observable<T>;
 export type Style = Omit<NativeStyle, keyof NativeObservable | 'view' | 'viewRef' | 'fontInternal' | 'toString' | 'PropertyBag' | 'setScopedCssVariable' | 'setUnscopedCssVariable' | 'removeScopedCssVariable' | 'removeUnscopedCssVariable' | 'getCssVariable' | 'resetScopedCssVariables' | 'resetUnscopedCssVariables'>;

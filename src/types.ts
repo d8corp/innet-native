@@ -22,7 +22,6 @@ import {
   type ListView,
   type NavigationButton,
   type Observable as NativeObservable,
-  type Page,
   type Placeholder,
   type Progress,
   type PropertyChangeData, type RootLayout,
@@ -52,7 +51,7 @@ import { type ItemsSource } from '@nativescript/core/ui/list-view'
 import { type SelectedIndexChangedEventData } from '@nativescript/core/ui/tab-view'
 import { type Observable, type Watcher } from 'watch-state'
 
-import { type Fragment } from './utils'
+import { type Fragment, type Page } from './utils'
 
 export type WatchProp <T> = T | Watcher<T>
 export type StateProp <T> = WatchProp<T> | Observable<T>

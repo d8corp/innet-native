@@ -2,8 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var Navigate = require('./Navigate.js');
+var Page = require('./Page.js');
 
 
 
-exports.Navigate = Navigate.Navigate;
+exports.Page = Page.Page;

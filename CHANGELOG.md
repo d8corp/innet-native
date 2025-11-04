@@ -2,6 +2,11 @@
 
 ## v0.0
 
+### v0.0.4 [![04.11.2025](https://img.shields.io/date/1762283954)](https://github.com/d8corp/innet-dom/tree/v0.0.4)
+
+- removed `Navigate`
+- add `navigation` property to `<page>`
+
 ### v0.0.3 [![04.11.2025](https://img.shields.io/date/1762281797)](https://github.com/d8corp/innet-dom/tree/v0.0.3)
 
 - add `Navigate`

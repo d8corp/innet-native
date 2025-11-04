@@ -1,6 +1,7 @@
-import { Label, RootLayout, FlexboxLayout, FormattedString, Switch, Button, Span, StackLayout, GridLayout, WrapLayout, DockLayout, AbsoluteLayout, Frame, Page, ActionBar, ActionItem, Image, NavigationButton, ActivityIndicator, DatePicker, HtmlView, ListPicker, ListView, Placeholder, Progress, ScrollView, SearchBar, SegmentedBar, SegmentedBarItem, Slider, TabView, TabViewItem, TextField, TextView, TimePicker, WebView } from '@nativescript/core';
+import { Label, RootLayout, FlexboxLayout, FormattedString, Switch, Button, Span, StackLayout, GridLayout, WrapLayout, DockLayout, AbsoluteLayout, Frame, ActionBar, ActionItem, Image, NavigationButton, ActivityIndicator, DatePicker, HtmlView, ListPicker, ListView, Placeholder, Progress, ScrollView, SearchBar, SegmentedBar, SegmentedBarItem, Slider, TabView, TabViewItem, TextField, TextView, TimePicker, WebView } from '@nativescript/core';
 import { onDestroy } from 'watch-state';
 import '../../utils/index.es6.js';
+import { Page } from '../../utils/Page/Page.es6.js';
 import { Fragment } from '../../utils/Fragment/Fragment.es6.js';
 
 const JSX_ELEMENTS = {

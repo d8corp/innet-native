@@ -1,13 +1,13 @@
 import {
   AbsoluteLayout, ActionBar, ActionItem, ActivityIndicator, Button, DatePicker, DockLayout,
   FlexboxLayout, FormattedString, Frame, GridLayout, HtmlView, Image,
-  Label, ListPicker, ListView, NavigationButton, Page, Placeholder, Progress,
+  Label, ListPicker, ListView, NavigationButton, Placeholder, Progress,
   RootLayout, ScrollView, SearchBar, SegmentedBar, SegmentedBarItem, Slider, Span, StackLayout,
   Switch, TabView, TabViewItem, TextField, TextView, TimePicker, type ViewBase, WebView, WrapLayout,
 } from '@nativescript/core'
 import { onDestroy } from 'watch-state'
 
-import { Fragment } from '../../utils'
+import { Fragment, Page } from '../../utils'
 
 export const JSX_ELEMENTS = {
   label: Label,

@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var core = require('@nativescript/core');
 var watchState = require('watch-state');
 require('../../utils/index.js');
+var Page = require('../../utils/Page/Page.js');
 var Fragment = require('../../utils/Fragment/Fragment.js');
 
 const JSX_ELEMENTS = {
@@ -21,7 +22,7 @@ const JSX_ELEMENTS = {
     'dock-layout': core.DockLayout,
     'absolute-layout': core.AbsoluteLayout,
     frame: core.Frame,
-    page: core.Page,
+    page: Page.Page,
     'action-bar': core.ActionBar,
     'action-item': core.ActionItem,
     fragment: Fragment.Fragment,

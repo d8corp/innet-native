@@ -10,7 +10,6 @@ export { JSXPlugins, arrayPlugins, handler as default, fnPlugins, handler, nodeP
 export { Portal } from './components/Portal/Portal.es6.js';
 export { Show } from './components/Show/Show.es6.js';
 export { Hide } from './components/Hide/Hide.es6.js';
-export { Navigate } from './components/Navigate/Navigate.es6.js';
 export { For, getForKey } from './components/For/For.es6.js';
 export { useParent } from './hooks/useParent/useParent.es6.js';
 export { JSX_ELEMENTS, useView } from './hooks/useView/useView.es6.js';
@@ -29,3 +28,4 @@ export { setParent } from './utils/setParent/setParent.es6.js';
 export { Fragment } from './utils/Fragment/Fragment.es6.js';
 export { after } from './utils/after/after.es6.js';
 export { before } from './utils/before/before.es6.js';
+export { Page } from './utils/Page/Page.es6.js';
