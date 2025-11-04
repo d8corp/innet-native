@@ -1,5 +1,5 @@
 import { type Ref } from '@innet/utils';
-import { type AbsoluteLayout, type ActionBar, type ActionItem, type ActivityIndicator, type Button, type Color, type ContentView, type CreateViewEventData, type DatePicker, type DockLayout, type EventData, type FlexboxLayout, type FormattedString, type Frame, type GridLayout, type HtmlView, type Image, type ItemEventData, type Label, type ListPicker, type ListView, type NavigationButton, type Observable as NativeObservable, type Placeholder, type Progress, type PropertyChangeData, type RootLayout, type ScrollEventData, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem, type Slider, type Span, type StackLayout, type Style as NativeStyle, type Switch, type TabView, type TabViewItem, type TextBase, type TextField, type TextView, type TimePicker, type View, type ViewBase, type WebView, type WrapLayout } from '@nativescript/core';
+import { type AbsoluteLayout, type ActionBar, type ActionItem, type ActivityIndicator, type Button, type Color, type ContentView, type CreateViewEventData, type DatePicker, type DockLayout, type EventData, type FlexboxLayout, type FormattedString, type Frame, type GridLayout, type HtmlView, type Image, type ItemEventData, type Label, type ListPicker, type ListView, type NavigationButton, type NavigationEntry, type Observable as NativeObservable, type Placeholder, type Progress, type PropertyChangeData, type RootLayout, type ScrollEventData, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem, type Slider, type Span, type StackLayout, type Style as NativeStyle, type Switch, type TabView, type TabViewItem, type TextBase, type TextField, type TextView, type TimePicker, type View, type ViewBase, type WebView, type WrapLayout } from '@nativescript/core';
 import { type CoreTypes } from '@nativescript/core/core-types';
 import { type ItemsSource } from '@nativescript/core/ui/list-view';
 import { type SelectedIndexChangedEventData } from '@nativescript/core/ui/tab-view';
@@ -12,7 +12,7 @@ export type ObservableStyle = {
     [K in keyof Style]?: StateProp<Style[K]>;
 };
 export type NsPropertiesOnly<T> = {
-    [K in keyof T]: T[K] extends Color ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
+    [K in keyof T]: T[K] extends Color | NavigationEntry ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
 }[keyof T];
 export type NsColor<T> = T extends Color ? T | string : T;
 export type NsSize<T> = T extends CoreTypes.PercentLengthType ? T | string : T;

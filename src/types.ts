@@ -21,6 +21,7 @@ import {
   type ListPicker,
   type ListView,
   type NavigationButton,
+  type NavigationEntry,
   type Observable as NativeObservable,
   type Placeholder,
   type Progress,
@@ -76,7 +77,7 @@ keyof NativeObservable
 export type ObservableStyle = { [K in keyof Style]?: StateProp<Style[K]> }
 
 export type NsPropertiesOnly<T> = {
-  [K in keyof T]: T[K] extends Color ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
+  [K in keyof T]: T[K] extends Color | NavigationEntry ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
 }[keyof T]
 
 export type NsColor<T> = T extends Color ? T | string : T
