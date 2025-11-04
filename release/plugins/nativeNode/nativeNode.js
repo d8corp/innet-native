@@ -23,10 +23,11 @@ function nativeNode() {
         if (app instanceof core.Page) {
             const handler = innet.useHandler();
             const frame = handler[constants.PARENT_FRAME];
+            const navigation = handler[constants.PARENT_NAVIGATE];
             if (!frame) {
                 throw Error('You can place <page> only in a <frame>');
             }
-            frame.navigate(() => app);
+            frame.navigate(Object.assign(Object.assign({}, navigation), { create: () => app }));
             return;
         }
         if (app instanceof core.Span) {

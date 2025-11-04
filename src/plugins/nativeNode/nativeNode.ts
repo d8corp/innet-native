@@ -12,7 +12,7 @@ import {
 } from '@nativescript/core'
 import { type HandlerPlugin, useApp, useHandler } from 'innet'
 
-import { PARENT_FRAME } from '../../constants'
+import { PARENT_FRAME, PARENT_NAVIGATE } from '../../constants'
 import { useParent } from '../../hooks'
 
 export function nativeNode (): HandlerPlugin {
@@ -32,12 +32,17 @@ export function nativeNode (): HandlerPlugin {
     if (app instanceof Page) {
       const handler = useHandler()
       const frame: Frame = handler[PARENT_FRAME]
+      const navigation = handler[PARENT_NAVIGATE]
 
       if (!frame) {
         throw Error('You can place <page> only in a <frame>')
       }
 
-      frame.navigate(() => app)
+      frame.navigate({
+        ...navigation,
+        create: () => app,
+      })
+
       return
     }
 

@@ -1,7 +1,7 @@
 import { Ref } from '@innet/utils';
 import { View, Page, Span, FormattedString, TextBase, ActionBar, ActionItem, SegmentedBarItem, SegmentedBar, TabViewItem, TabView, LayoutBase, ContentView, ViewBase } from '@nativescript/core';
 import { useApp, useHandler } from 'innet';
-import { PARENT_FRAME } from '../../constants.es6.js';
+import { PARENT_FRAME, PARENT_NAVIGATE } from '../../constants.es6.js';
 import '../../hooks/index.es6.js';
 import { useParent } from '../../hooks/useParent/useParent.es6.js';
 
@@ -19,10 +19,11 @@ function nativeNode() {
         if (app instanceof Page) {
             const handler = useHandler();
             const frame = handler[PARENT_FRAME];
+            const navigation = handler[PARENT_NAVIGATE];
             if (!frame) {
                 throw Error('You can place <page> only in a <frame>');
             }
-            frame.navigate(() => app);
+            frame.navigate(Object.assign(Object.assign({}, navigation), { create: () => app }));
             return;
         }
         if (app instanceof Span) {

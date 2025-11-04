@@ -3,5 +3,6 @@
 require('./Portal/index.js');
 require('./Show/index.js');
 require('./Hide/index.js');
+require('./Navigate/index.js');
 require('./For/index.js');
 

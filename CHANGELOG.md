@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.3 [![04.11.2025](https://img.shields.io/date/1762281797)](https://github.com/d8corp/innet-dom/tree/v0.0.3)
+
+- add `Navigate`
+
 ### v0.0.2 [![04.11.2025](https://img.shields.io/date/1762264289)](https://github.com/d8corp/innet-dom/tree/v0.0.2)
 
 - fixed types
