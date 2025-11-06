@@ -114,21 +114,19 @@ export const handler = createHandler([
   () => () => {
     const app = useApp()
 
-    queueMicrotask(() => {
-      Application.run({
-        create: () => {
-          const root = new Ref<View>()
-          const handler = Object.create(handlerInner)
-          setParent(handler, root)
-          innet(app, handler)
+    Application.run({
+      create: () => {
+        const root = new Ref<View>()
+        const handler = Object.create(handlerInner)
+        setParent(handler, root)
+        innet(app, handler)
 
-          if (!root.value) {
-            throw Error('No View Provided')
-          }
+        if (!root.value) {
+          throw Error('No View Provided')
+        }
 
-          return root.value
-        },
-      })
+        return root.value
+      },
     })
   },
 ])

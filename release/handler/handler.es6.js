@@ -53,19 +53,17 @@ const handlerInner = createHandler([
 const handler = createHandler([
     () => () => {
         const app = useApp();
-        queueMicrotask(() => {
-            Application.run({
-                create: () => {
-                    const root = new Ref();
-                    const handler = Object.create(handlerInner);
-                    setParent(handler, root);
-                    innet(app, handler);
-                    if (!root.value) {
-                        throw Error('No View Provided');
-                    }
-                    return root.value;
-                },
-            });
+        Application.run({
+            create: () => {
+                const root = new Ref();
+                const handler = Object.create(handlerInner);
+                setParent(handler, root);
+                innet(app, handler);
+                if (!root.value) {
+                    throw Error('No View Provided');
+                }
+                return root.value;
+            },
         });
     },
 ]);

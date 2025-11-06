@@ -61,19 +61,17 @@ const handlerInner = innet.createHandler([
 const handler = innet.createHandler([
     () => () => {
         const app = innet.useApp();
-        queueMicrotask(() => {
-            core.Application.run({
-                create: () => {
-                    const root = new utils.Ref();
-                    const handler = Object.create(handlerInner);
-                    setParent.setParent(handler, root);
-                    innet__default["default"](app, handler);
-                    if (!root.value) {
-                        throw Error('No View Provided');
-                    }
-                    return root.value;
-                },
-            });
+        core.Application.run({
+            create: () => {
+                const root = new utils.Ref();
+                const handler = Object.create(handlerInner);
+                setParent.setParent(handler, root);
+                innet__default["default"](app, handler);
+                if (!root.value) {
+                    throw Error('No View Provided');
+                }
+                return root.value;
+            },
         });
     },
 ]);

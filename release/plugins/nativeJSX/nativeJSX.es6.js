@@ -43,7 +43,9 @@ function nativeJSX() {
                     continue;
                 }
                 if (['ios', 'android'].includes(key)) {
-                    Object.assign(target[key], value);
+                    if (target[key]) {
+                        Object.assign(target[key], value);
+                    }
                     continue;
                 }
                 if (key.startsWith('on')) {

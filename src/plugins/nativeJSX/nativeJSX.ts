@@ -51,7 +51,10 @@ export function nativeJSX (): HandlerPlugin {
         }
 
         if (['ios', 'android'].includes(key)) {
-          Object.assign((target as any)[key], value)
+          if ((target as any)[key]) {
+            Object.assign((target as any)[key], value)
+          }
+
           continue
         }
 
