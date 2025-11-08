@@ -27,7 +27,7 @@ function nativeJSX() {
         const target = useView.useView(Type);
         if (props) {
             for (const key in props) {
-                if (key === 'children')
+                if (['children', 'animate'].includes(key))
                     continue;
                 if (key === 'ref') {
                     if (props.ref) {
@@ -69,20 +69,36 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = utils.watchValueToValueWatcher(value);
-                if (typeof watchValue === 'function') {
-                    new watchState.Watch(update => {
-                        const result = watchValue(update);
+                if (typeof watchValue !== 'function') {
+                    if (watchValue !== undefined) {
+                        // @ts-expect-error TODO: check it
+                        target[key] = watchValue;
+                    }
+                    continue;
+                }
+                const animate = props.animate;
+                let prevValue;
+                new watchState.Watch(update => {
+                    const result = watchValue(update);
+                    if (!update && result === undefined)
+                        return;
+                    if (!update) {
                         // @ts-expect-error TODO: fix types
-                        if (target[key] !== result) {
-                            // @ts-expect-error TODO: fix types
-                            target[key] = result;
-                        }
-                    });
-                }
-                else if (watchValue !== undefined) {
-                    // @ts-expect-error TODO: check it
-                    target[key] = watchValue;
-                }
+                        target[key] = result;
+                        prevValue = result;
+                        return;
+                    }
+                    if (prevValue === result)
+                        return;
+                    if (animate && key in animate && target instanceof core.View) {
+                        target.animate(Object.assign({ [key]: result }, utils.use(animate[key])));
+                    }
+                    else {
+                        // @ts-expect-error TODO: fix types
+                        target[key] = result;
+                    }
+                    prevValue = result;
+                });
             }
         }
         if (children) {

@@ -4,9 +4,11 @@ import {
   type ActionBar,
   type ActionItem,
   type ActivityIndicator,
+  type AnimationDefinition,
   type Button,
   type Color,
   type ContentView,
+  type CoreTypes,
   type CreateViewEventData,
   type DatePicker,
   type DockLayout,
@@ -16,7 +18,9 @@ import {
   type Frame,
   type GridLayout,
   type HtmlView,
-  type Image, type ItemEventData,
+  type Image,
+  type ItemEventData,
+  type ItemsSource,
   type Label,
   type ListPicker,
   type ListView,
@@ -25,12 +29,14 @@ import {
   type Observable as NativeObservable,
   type Placeholder,
   type Progress,
-  type PropertyChangeData, type RootLayout,
+  type PropertyChangeData,
+  type RootLayout,
   type ScrollEventData,
   type ScrollView,
   type SearchBar,
   type SegmentedBar,
   type SegmentedBarItem,
+  type SelectedIndexChangedEventData,
   type Slider,
   type Span,
   type StackLayout,
@@ -47,9 +53,6 @@ import {
   type WebView,
   type WrapLayout,
 } from '@nativescript/core'
-import { type CoreTypes } from '@nativescript/core/core-types'
-import { type ItemsSource } from '@nativescript/core/ui/list-view'
-import { type SelectedIndexChangedEventData } from '@nativescript/core/ui/tab-view'
 import { type WatchValue } from '@watch-state/utils'
 
 import { type Fragment, type Page } from './utils'
@@ -81,10 +84,15 @@ export type NsColor<T> = T extends Color ? T | string : T
 export type NsSize<T> = T extends CoreTypes.PercentLengthType ? T | string : T
 
 export type PrivateViewBaseProps = `_${string}` | 'domNode' | 'nativeViewProtected'
+export type AnimatePropsKey = Exclude<keyof AnimationDefinition, 'target' | 'duration' | 'delay' | 'curve' | 'iterations'>
+export type AnimateParamsKey = Exclude<keyof AnimationDefinition, AnimatePropsKey | 'target'>
+export type AnimateParams = { [K in AnimateParamsKey]?: AnimationDefinition[K] }
+export type AnimateProp = Partial<Record<AnimatePropsKey, WatchValue<AnimateParams>>>
 
 export type ViewBaseProps<T extends ViewBase> = {
   ref?: Ref<T>
   style?: ObservableStyle
+  animate?: AnimateProp
 } & {
   [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NsSize<NsColor<T[K]>>>
 }

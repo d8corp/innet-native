@@ -1,14 +1,12 @@
 import { type JSXElement, useChildren } from '@innet/jsx'
-import {
-  Frame,
-  ViewBase,
-} from '@nativescript/core'
-import { watchValueToValueWatcher } from '@watch-state/utils'
+import { Frame, View, ViewBase } from '@nativescript/core'
+import { use, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 import { onDestroy, Watch } from 'watch-state'
 
 import { PARENT_FRAME } from '../../constants'
 import { JSX_ELEMENTS, useView } from '../../hooks'
+import { type AnimateProp, type AnimatePropsKey } from '../../types'
 import { setParent } from '../../utils'
 
 export function nativeJSX (): HandlerPlugin {
@@ -23,7 +21,7 @@ export function nativeJSX (): HandlerPlugin {
 
     if (props) {
       for (const key in props) {
-        if (key === 'children') continue
+        if (['children', 'animate'].includes(key)) continue
 
         if (key === 'ref') {
           if (props.ref) {
@@ -76,19 +74,44 @@ export function nativeJSX (): HandlerPlugin {
 
         const watchValue = watchValueToValueWatcher(value)
 
-        if (typeof watchValue === 'function') {
-          new Watch(update => {
-            const result = watchValue(update)
-            // @ts-expect-error TODO: fix types
-            if (target[key] !== result) {
-              // @ts-expect-error TODO: fix types
-              target[key] = result
-            }
-          })
-        } else if (watchValue !== undefined) {
-          // @ts-expect-error TODO: check it
-          target[key] = watchValue
+        if (typeof watchValue !== 'function') {
+          if (watchValue !== undefined) {
+            // @ts-expect-error TODO: check it
+            target[key] = watchValue
+          }
+
+          continue
         }
+
+        const animate: AnimateProp = props.animate
+        let prevValue: any
+
+        new Watch(update => {
+          const result = watchValue(update)
+
+          if (!update && result === undefined) return
+
+          if (!update) {
+            // @ts-expect-error TODO: fix types
+            target[key] = result
+            prevValue = result
+            return
+          }
+
+          if (prevValue === result) return
+
+          if (animate && key in animate && target instanceof View) {
+            target.animate({
+              [key]: result,
+              ...use(animate[key as AnimatePropsKey]),
+            })
+          } else {
+            // @ts-expect-error TODO: fix types
+            target[key] = result
+          }
+
+          prevValue = result
+        })
       }
     }
 

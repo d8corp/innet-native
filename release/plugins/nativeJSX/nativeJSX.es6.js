@@ -1,6 +1,6 @@
 import { useChildren } from '@innet/jsx';
-import { ViewBase, Frame } from '@nativescript/core';
-import { watchValueToValueWatcher } from '@watch-state/utils';
+import { ViewBase, View, Frame } from '@nativescript/core';
+import { watchValueToValueWatcher, use } from '@watch-state/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
 import { Watch, onDestroy } from 'watch-state';
 import { PARENT_FRAME } from '../../constants.es6.js';
@@ -19,7 +19,7 @@ function nativeJSX() {
         const target = useView(Type);
         if (props) {
             for (const key in props) {
-                if (key === 'children')
+                if (['children', 'animate'].includes(key))
                     continue;
                 if (key === 'ref') {
                     if (props.ref) {
@@ -61,20 +61,36 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = watchValueToValueWatcher(value);
-                if (typeof watchValue === 'function') {
-                    new Watch(update => {
-                        const result = watchValue(update);
+                if (typeof watchValue !== 'function') {
+                    if (watchValue !== undefined) {
+                        // @ts-expect-error TODO: check it
+                        target[key] = watchValue;
+                    }
+                    continue;
+                }
+                const animate = props.animate;
+                let prevValue;
+                new Watch(update => {
+                    const result = watchValue(update);
+                    if (!update && result === undefined)
+                        return;
+                    if (!update) {
                         // @ts-expect-error TODO: fix types
-                        if (target[key] !== result) {
-                            // @ts-expect-error TODO: fix types
-                            target[key] = result;
-                        }
-                    });
-                }
-                else if (watchValue !== undefined) {
-                    // @ts-expect-error TODO: check it
-                    target[key] = watchValue;
-                }
+                        target[key] = result;
+                        prevValue = result;
+                        return;
+                    }
+                    if (prevValue === result)
+                        return;
+                    if (animate && key in animate && target instanceof View) {
+                        target.animate(Object.assign({ [key]: result }, use(animate[key])));
+                    }
+                    else {
+                        // @ts-expect-error TODO: fix types
+                        target[key] = result;
+                    }
+                    prevValue = result;
+                });
             }
         }
         if (children) {
