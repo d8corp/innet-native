@@ -37,31 +37,35 @@ function nativeJSX() {
                 }
                 const value = props[key];
                 if (key === 'style') {
-                    for (const property in value) {
-                        const rawValue = utils.watchValueToValueWatcher(value[property]);
-                        if (typeof rawValue === 'function') {
-                            new watchState.Watch(update => {
-                                target.style.setProperty(property, rawValue(update));
-                            });
-                        }
-                        else {
-                            target.style.setProperty(property, rawValue);
+                    if (value) {
+                        for (const property in value) {
+                            const rawValue = utils.watchValueToValueWatcher(value[property]);
+                            if (typeof rawValue === 'function') {
+                                new watchState.Watch(update => {
+                                    target.style.setProperty(property, rawValue(update));
+                                });
+                            }
+                            else {
+                                target.style.setProperty(property, rawValue);
+                            }
                         }
                     }
                     continue;
                 }
                 if (['ios', 'android'].includes(key)) {
-                    if (target[key]) {
+                    if (value && target[key]) {
                         Object.assign(target[key], value);
                     }
                     continue;
                 }
                 if (key.startsWith('on')) {
-                    const eventName = key[2].toLowerCase() + key.slice(3);
-                    target.on(eventName, value);
-                    watchState.onDestroy(() => {
-                        target.off(eventName, value);
-                    });
+                    if (value) {
+                        const eventName = key[2].toLowerCase() + key.slice(3);
+                        target.on(eventName, value);
+                        watchState.onDestroy(() => {
+                            target.off(eventName, value);
+                        });
+                    }
                     continue;
                 }
                 const watchValue = utils.watchValueToValueWatcher(value);
@@ -75,7 +79,7 @@ function nativeJSX() {
                         }
                     });
                 }
-                else {
+                else if (watchValue !== undefined) {
                     // @ts-expect-error TODO: check it
                     target[key] = watchValue;
                 }

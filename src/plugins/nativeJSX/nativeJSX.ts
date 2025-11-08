@@ -36,22 +36,25 @@ export function nativeJSX (): HandlerPlugin {
         const value = props[key]
 
         if (key === 'style') {
-          for (const property in value) {
-            const rawValue = watchValueToValueWatcher(value[property])
+          if (value) {
+            for (const property in value) {
+              const rawValue = watchValueToValueWatcher(value[property])
 
-            if (typeof rawValue === 'function') {
-              new Watch(update => {
-                target.style.setProperty(property, rawValue(update))
-              })
-            } else {
-              target.style.setProperty(property, rawValue)
+              if (typeof rawValue === 'function') {
+                new Watch(update => {
+                  target.style.setProperty(property, rawValue(update))
+                })
+              } else {
+                target.style.setProperty(property, rawValue)
+              }
             }
           }
+
           continue
         }
 
         if (['ios', 'android'].includes(key)) {
-          if ((target as any)[key]) {
+          if (value && (target as any)[key]) {
             Object.assign((target as any)[key], value)
           }
 
@@ -59,12 +62,14 @@ export function nativeJSX (): HandlerPlugin {
         }
 
         if (key.startsWith('on')) {
-          const eventName = key[2].toLowerCase() + key.slice(3)
-          target.on(eventName, value)
+          if (value) {
+            const eventName = key[2].toLowerCase() + key.slice(3)
+            target.on(eventName, value)
 
-          onDestroy(() => {
-            target.off(eventName, value)
-          })
+            onDestroy(() => {
+              target.off(eventName, value)
+            })
+          }
 
           continue
         }
@@ -80,7 +85,7 @@ export function nativeJSX (): HandlerPlugin {
               target[key] = result
             }
           })
-        } else {
+        } else if (watchValue !== undefined) {
           // @ts-expect-error TODO: check it
           target[key] = watchValue
         }
