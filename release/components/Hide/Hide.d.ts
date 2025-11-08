@@ -1,6 +1,6 @@
-import { type StateProp } from '../../types';
+import { type WatchValue } from '@watch-state/utils';
 export interface HideProps {
-    when: StateProp<any>;
+    when: WatchValue<any>;
     children?: JSX.Element;
     fallback?: JSX.Element;
 }

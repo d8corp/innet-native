@@ -1,6 +1,6 @@
 {
   "name": "@innet/native",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Tools to build Mobile Application",
   "main": "index.js",
   "module": "index.es6.js",

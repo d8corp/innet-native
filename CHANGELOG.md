@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.7 [![08.11.2025](https://img.shields.io/date/1762598796)](https://github.com/d8corp/innet-dom/tree/v0.0.7)
+
+- remove `StateProp` and `WatchProp`
+
 ### v0.0.6 [![07.11.2025](https://img.shields.io/date/1762462821)](https://github.com/d8corp/innet-dom/tree/v0.0.6)
 
 - fixed bugs

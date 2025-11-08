@@ -1,9 +1,7 @@
-import { inject } from '@watch-state/utils'
-
-import { type StateProp } from '../../types'
+import { inject, type WatchValue } from '@watch-state/utils'
 
 export interface ShowProps {
-  when: StateProp<any>
+  when: WatchValue<any>
   children?: JSX.Element
   fallback?: JSX.Element
 }

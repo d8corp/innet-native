@@ -1,12 +1,11 @@
 import { EMPTY } from '@innet/jsx'
 import { lcs } from '@innet/utils'
 import { type View } from '@nativescript/core'
-import { watchValueToValueWatcher } from '@watch-state/utils'
+import { type WatchValue, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { type Handler, useHandler } from 'innet'
 import { createEvent, onDestroy, State, unwatch, Watch } from 'watch-state'
 
 import { FOR_INDEX, FOR_VALUE, FOR_WATCHER_KEY } from '../../constants'
-import { type StateProp } from '../../types'
 import { after, before, Fragment, getContainer, getParent, setParent } from '../../utils'
 
 export type ForKeyFn<T, V> = (data: T) => V
@@ -25,10 +24,10 @@ export function getForKey<T, V> (data: T, key?: ForKey<T, V>): V {
   return data as any
 }
 
-type GetType<T extends StateProp<Iterable<any>>> = T extends StateProp<Iterable<infer TT>> ? TT : never
-type GetKey<T extends StateProp<Iterable<any>>, V extends ForKey<GetType<T>, any>> = V extends ForKeyStr<GetType<T>, infer VV> ? VV : V extends ForKeyFn<GetType<T>, infer VV> ? VV : never
+type GetType<T extends WatchValue<Iterable<any>>> = T extends WatchValue<Iterable<infer TT>> ? TT : never
+type GetKey<T extends WatchValue<Iterable<any>>, V extends ForKey<GetType<T>, any>> = V extends ForKeyStr<GetType<T>, infer VV> ? VV : V extends ForKeyFn<GetType<T>, infer VV> ? VV : never
 
-export interface ForProps<T extends StateProp<Iterable<any>>, V extends ForKey<GetType<T>, any>> {
+export interface ForProps<T extends WatchValue<Iterable<any>>, V extends ForKey<GetType<T>, any>> {
   of?: T
   key?: V
   fallback?: JSX.Element
@@ -39,7 +38,7 @@ export interface ForProps<T extends StateProp<Iterable<any>>, V extends ForKey<G
   ) => JSX.Element
 }
 
-export function For <T extends StateProp<Iterable<any>>, V extends ForKey<GetType<T>, any>> ({
+export function For <T extends WatchValue<Iterable<any>>, V extends ForKey<GetType<T>, any>> ({
   key,
   of: ofPropRaw,
   children,

@@ -50,12 +50,9 @@ import {
 import { type CoreTypes } from '@nativescript/core/core-types'
 import { type ItemsSource } from '@nativescript/core/ui/list-view'
 import { type SelectedIndexChangedEventData } from '@nativescript/core/ui/tab-view'
-import { type Observable, type Watcher } from 'watch-state'
+import { type WatchValue } from '@watch-state/utils'
 
 import { type Fragment, type Page } from './utils'
-
-export type WatchProp <T> = T | Watcher<T>
-export type StateProp <T> = WatchProp<T> | Observable<T>
 
 export type Style = Omit<
 NativeStyle,
@@ -74,7 +71,7 @@ keyof NativeObservable
 | 'resetUnscopedCssVariables'
 >
 
-export type ObservableStyle = { [K in keyof Style]?: StateProp<Style[K]> }
+export type ObservableStyle = { [K in keyof Style]?: WatchValue<Style[K]> }
 
 export type NsPropertiesOnly<T> = {
   [K in keyof T]: T[K] extends Color | NavigationEntry ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
@@ -89,7 +86,7 @@ export type ViewBaseProps<T extends ViewBase> = {
   ref?: Ref<T>
   style?: ObservableStyle
 } & {
-  [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : StateProp<NsSize<NsColor<T[K]>>>
+  [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NsSize<NsColor<T[K]>>>
 }
 
 export type ViewProps<T extends View> = ViewBaseProps<T> & {
@@ -113,7 +110,7 @@ export type ChildrenViewProps<T extends View> = ViewProps<T> & {
 }
 
 export type SpanProps = ViewBaseProps<Span> & {
-  children?: StateProp<string | number>
+  children?: WatchValue<string | number>
   onLinkTap?: (event: EventData) => void
 }
 
