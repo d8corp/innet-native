@@ -2,7 +2,7 @@ import { useChildren } from '@innet/jsx';
 import { ViewBase, View, Frame } from '@nativescript/core';
 import { watchValueToValueWatcher, use } from '@watch-state/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
-import { Watch, onDestroy } from 'watch-state';
+import { Watch, onDestroy, unwatch } from 'watch-state';
 import { PARENT_FRAME } from '../../constants.es6.js';
 import '../../hooks/index.es6.js';
 import '../../utils/index.es6.js';
@@ -83,7 +83,9 @@ function nativeJSX() {
                     if (prevValue === result)
                         return;
                     if (animate && key in animate && target instanceof View) {
-                        target.animate(Object.assign({ [key]: result }, use(animate[key])));
+                        const animateParams = unwatch(() => use(animate[key]));
+                        const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
+                        target.animate(Object.assign({ [key]: result }, params));
                     }
                     else {
                         // @ts-expect-error TODO: fix types

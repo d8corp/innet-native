@@ -87,7 +87,7 @@ export type PrivateViewBaseProps = `_${string}` | 'domNode' | 'nativeViewProtect
 export type AnimatePropsKey = Exclude<keyof AnimationDefinition, 'target' | 'duration' | 'delay' | 'curve' | 'iterations'>
 export type AnimateParamsKey = Exclude<keyof AnimationDefinition, AnimatePropsKey | 'target'>
 export type AnimateParams = { [K in AnimateParamsKey]?: AnimationDefinition[K] }
-export type AnimateProp = Partial<Record<AnimatePropsKey, WatchValue<AnimateParams>>>
+export type AnimateProp = Partial<Record<AnimatePropsKey, WatchValue<AnimateParams | number>>>
 
 export type ViewBaseProps<T extends ViewBase> = {
   ref?: Ref<T>

@@ -91,7 +91,9 @@ function nativeJSX() {
                     if (prevValue === result)
                         return;
                     if (animate && key in animate && target instanceof core.View) {
-                        target.animate(Object.assign({ [key]: result }, utils.use(animate[key])));
+                        const animateParams = watchState.unwatch(() => utils.use(animate[key]));
+                        const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
+                        target.animate(Object.assign({ [key]: result }, params));
                     }
                     else {
                         // @ts-expect-error TODO: fix types

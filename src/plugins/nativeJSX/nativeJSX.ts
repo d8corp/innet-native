@@ -2,7 +2,7 @@ import { type JSXElement, useChildren } from '@innet/jsx'
 import { Frame, View, ViewBase } from '@nativescript/core'
 import { use, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
-import { onDestroy, Watch } from 'watch-state'
+import { onDestroy, unwatch, Watch } from 'watch-state'
 
 import { PARENT_FRAME } from '../../constants'
 import { JSX_ELEMENTS, useView } from '../../hooks'
@@ -101,10 +101,10 @@ export function nativeJSX (): HandlerPlugin {
           if (prevValue === result) return
 
           if (animate && key in animate && target instanceof View) {
-            target.animate({
-              [key]: result,
-              ...use(animate[key as AnimatePropsKey]),
-            })
+            const animateParams = unwatch(() => use(animate[key as AnimatePropsKey]))
+            const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams
+
+            target.animate({ [key]: result, ...params })
           } else {
             // @ts-expect-error TODO: fix types
             target[key] = result
