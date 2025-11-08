@@ -76,7 +76,6 @@ function nativeJSX() {
                     }
                     continue;
                 }
-                const animate = props.animate;
                 let prevValue;
                 new watchState.Watch(update => {
                     const result = watchValue(update);
@@ -90,16 +89,26 @@ function nativeJSX() {
                     }
                     if (prevValue === result)
                         return;
-                    if (animate && key in animate && target instanceof core.View) {
-                        const animateParams = watchState.unwatch(() => utils.use(animate[key]));
-                        const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
-                        target.animate(Object.assign({ [key]: result }, params));
-                    }
-                    else {
-                        // @ts-expect-error TODO: fix types
-                        target[key] = result;
-                    }
                     prevValue = result;
+                    const animate = watchState.unwatch(() => utils.use(props.animate));
+                    if (animate && constants.ANIMATE_PROPS.includes(key) && target instanceof core.View) {
+                        if (animate === true) {
+                            target.animate({ [key]: result, duration: 250 });
+                            return;
+                        }
+                        if (typeof animate === 'number') {
+                            target.animate({ [key]: result, duration: animate });
+                            return;
+                        }
+                        if (key in animate) {
+                            const animateParams = watchState.unwatch(() => utils.use(animate[key]));
+                            const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
+                            target.animate(Object.assign({ [key]: result }, params));
+                            return;
+                        }
+                    }
+                    // @ts-expect-error TODO: fix types
+                    target[key] = result;
                 });
             }
         }

@@ -36,6 +36,7 @@ var Page = require('./utils/Page/Page.js');
 
 
 
+exports.ANIMATE_PROPS = constants.ANIMATE_PROPS;
 exports.FOR_INDEX = constants.FOR_INDEX;
 exports.FOR_VALUE = constants.FOR_VALUE;
 exports.FOR_WATCHER_KEY = constants.FOR_WATCHER_KEY;

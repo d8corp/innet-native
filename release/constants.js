@@ -8,7 +8,17 @@ const FOR_INDEX = Symbol('FOR_INDEX');
 const FOR_WATCHER_KEY = Symbol('FOR_WATCHER_KEY');
 const PARENT_FRAME = Symbol('PARENT_FRAME');
 const PARENT_NAVIGATE = Symbol('PARENT_NAVIGATE');
+const ANIMATE_PROPS = [
+    'height',
+    'width',
+    'opacity',
+    'backgroundColor',
+    'rotate',
+    'scale',
+    'translate',
+];
 
+exports.ANIMATE_PROPS = ANIMATE_PROPS;
 exports.FOR_INDEX = FOR_INDEX;
 exports.FOR_VALUE = FOR_VALUE;
 exports.FOR_WATCHER_KEY = FOR_WATCHER_KEY;

@@ -3,7 +3,7 @@ import { ViewBase, View, Frame } from '@nativescript/core';
 import { watchValueToValueWatcher, use } from '@watch-state/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
 import { Watch, onDestroy, unwatch } from 'watch-state';
-import { PARENT_FRAME } from '../../constants.es6.js';
+import { ANIMATE_PROPS, PARENT_FRAME } from '../../constants.es6.js';
 import '../../hooks/index.es6.js';
 import '../../utils/index.es6.js';
 import { JSX_ELEMENTS, useView } from '../../hooks/useView/useView.es6.js';
@@ -68,7 +68,6 @@ function nativeJSX() {
                     }
                     continue;
                 }
-                const animate = props.animate;
                 let prevValue;
                 new Watch(update => {
                     const result = watchValue(update);
@@ -82,16 +81,26 @@ function nativeJSX() {
                     }
                     if (prevValue === result)
                         return;
-                    if (animate && key in animate && target instanceof View) {
-                        const animateParams = unwatch(() => use(animate[key]));
-                        const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
-                        target.animate(Object.assign({ [key]: result }, params));
-                    }
-                    else {
-                        // @ts-expect-error TODO: fix types
-                        target[key] = result;
-                    }
                     prevValue = result;
+                    const animate = unwatch(() => use(props.animate));
+                    if (animate && ANIMATE_PROPS.includes(key) && target instanceof View) {
+                        if (animate === true) {
+                            target.animate({ [key]: result, duration: 250 });
+                            return;
+                        }
+                        if (typeof animate === 'number') {
+                            target.animate({ [key]: result, duration: animate });
+                            return;
+                        }
+                        if (key in animate) {
+                            const animateParams = unwatch(() => use(animate[key]));
+                            const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
+                            target.animate(Object.assign({ [key]: result }, params));
+                            return;
+                        }
+                    }
+                    // @ts-expect-error TODO: fix types
+                    target[key] = result;
                 });
             }
         }

@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.11 [![09.11.2025](https://img.shields.io/date/1762639103)](https://github.com/d8corp/innet-dom/tree/v0.0.11)
+
+- improve `animate` property
+
 ### v0.0.10 [![09.11.2025](https://img.shields.io/date/1762637443)](https://github.com/d8corp/innet-dom/tree/v0.0.10)
 
 - improve `animate` property

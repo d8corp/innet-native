@@ -4,7 +4,7 @@ import { use, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 import { onDestroy, unwatch, Watch } from 'watch-state'
 
-import { PARENT_FRAME } from '../../constants'
+import { ANIMATE_PROPS, PARENT_FRAME } from '../../constants'
 import { JSX_ELEMENTS, useView } from '../../hooks'
 import { type AnimateProp, type AnimatePropsKey } from '../../types'
 import { setParent } from '../../utils'
@@ -83,7 +83,6 @@ export function nativeJSX (): HandlerPlugin {
           continue
         }
 
-        const animate: AnimateProp = props.animate
         let prevValue: any
 
         new Watch(update => {
@@ -99,18 +98,31 @@ export function nativeJSX (): HandlerPlugin {
           }
 
           if (prevValue === result) return
+          prevValue = result
+          const animate: AnimateProp | number | boolean = unwatch(() => use(props.animate))
 
-          if (animate && key in animate && target instanceof View) {
-            const animateParams = unwatch(() => use(animate[key as AnimatePropsKey]))
-            const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams
+          if (animate && ANIMATE_PROPS.includes(key as AnimatePropsKey) && target instanceof View) {
+            if (animate === true) {
+              target.animate({ [key]: result, duration: 250 })
+              return
+            }
 
-            target.animate({ [key]: result, ...params })
-          } else {
-            // @ts-expect-error TODO: fix types
-            target[key] = result
+            if (typeof animate === 'number') {
+              target.animate({ [key]: result, duration: animate })
+              return
+            }
+
+            if (key in animate) {
+              const animateParams = unwatch(() => use(animate[key as AnimatePropsKey]))
+              const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams
+
+              target.animate({ [key]: result, ...params })
+              return
+            }
           }
 
-          prevValue = result
+          // @ts-expect-error TODO: fix types
+          target[key] = result
         })
       }
     }
