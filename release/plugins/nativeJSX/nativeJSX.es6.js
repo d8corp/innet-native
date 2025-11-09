@@ -30,33 +30,37 @@ function nativeJSX() {
             }
             let animateOptions = {};
             let timer;
-            const runAnimation = () => {
+            const forceRunAnimation = () => {
                 if (!(target instanceof View))
                     return;
                 target.animate(animateOptions);
                 animateOptions = {};
             };
-            const setAnimation = (options) => {
-                Object.assign(animateOptions, options);
+            const runAnimation = () => {
                 const currentTimer = Promise.resolve().then(() => {
                     if (timer === currentTimer) {
-                        runAnimation();
+                        forceRunAnimation();
                     }
                 });
                 timer = currentTimer;
             };
-            const animate = (options) => {
+            const animate = (options, firstRender) => {
                 if (!(target instanceof View))
                     return;
-                if (target.isLoaded) {
-                    setAnimation(options);
+                if (firstRender) {
+                    Object.assign(animateOptions, options);
+                    target.once('loaded', () => {
+                        new SyncTimer(runAnimation);
+                    });
                     return;
                 }
-                target.once('loaded', () => {
-                    new SyncTimer(() => {
-                        setAnimation(options);
-                    });
-                });
+                if (target.isLoaded) {
+                    Object.assign(animateOptions, options);
+                    runAnimation();
+                    return;
+                }
+                Object.assign(animateOptions, options);
+                target.once('loaded', runAnimation);
             };
             for (const key in props) {
                 if (['children', 'animate', 'startingStyle'].includes(key))
@@ -163,12 +167,12 @@ function nativeJSX() {
                     }
                     return options;
                 };
-                const setValue = (value, update) => {
+                const setValue = (value, update, firstRender) => {
                     if (target instanceof View) {
                         if (update) {
                             const options = getAnimateOptions(value);
                             if (options) {
-                                animate(options);
+                                animate(options, firstRender);
                                 return;
                             }
                         }
@@ -183,10 +187,10 @@ function nativeJSX() {
                 };
                 if (typeof watchValue !== 'function') {
                     if (props.startingStyle && key in props.startingStyle && target instanceof View) {
-                        setValue(watchValue, true);
+                        setValue(watchValue, true, true);
                     }
                     else if (watchValue !== undefined) {
-                        setValue(watchValue);
+                        setValue(watchValue, false, true);
                     }
                     continue;
                 }
@@ -196,13 +200,13 @@ function nativeJSX() {
                     if (!update && result === undefined)
                         return;
                     if (!update) {
-                        setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View));
+                        setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View), true);
                         prevValue = result;
                         return;
                     }
                     if (prevValue === result)
                         return;
-                    setValue(result, update);
+                    setValue(result, true, false);
                     prevValue = result;
                 });
             }

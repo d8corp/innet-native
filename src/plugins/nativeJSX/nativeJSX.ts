@@ -31,37 +31,42 @@ export function nativeJSX (): HandlerPlugin {
       let animateOptions: AnimationDefinition = {}
       let timer: Promise<void>
 
-      const runAnimation = () => {
+      const forceRunAnimation = () => {
         if (!(target instanceof View)) return
         target.animate(animateOptions)
         animateOptions = {}
       }
 
-      const setAnimation = (options: AnimationDefinition) => {
-        Object.assign(animateOptions, options)
-
+      const runAnimation = () => {
         const currentTimer = Promise.resolve().then(() => {
           if (timer === currentTimer) {
-            runAnimation()
+            forceRunAnimation()
           }
         })
-
         timer = currentTimer
       }
 
-      const animate = (options: AnimationDefinition) => {
+      const animate = (options: AnimationDefinition, firstRender?: boolean) => {
         if (!(target instanceof View)) return
 
-        if (target.isLoaded) {
-          setAnimation(options)
+        if (firstRender) {
+          Object.assign(animateOptions, options)
+
+          target.once('loaded', () => {
+            new SyncTimer(runAnimation)
+          })
+
           return
         }
 
-        target.once('loaded', () => {
-          new SyncTimer(() => {
-            setAnimation(options)
-          })
-        })
+        if (target.isLoaded) {
+          Object.assign(animateOptions, options)
+          runAnimation()
+          return
+        }
+
+        Object.assign(animateOptions, options)
+        target.once('loaded', runAnimation)
       }
 
       for (const key in props) {
@@ -189,13 +194,13 @@ export function nativeJSX (): HandlerPlugin {
           return options
         }
 
-        const setValue = (value: any, update?: boolean) => {
+        const setValue = (value: any, update?: boolean, firstRender?: boolean) => {
           if (target instanceof View) {
             if (update) {
               const options = getAnimateOptions(value)
 
               if (options) {
-                animate(options)
+                animate(options, firstRender)
                 return
               }
             }
@@ -213,9 +218,9 @@ export function nativeJSX (): HandlerPlugin {
 
         if (typeof watchValue !== 'function') {
           if (props.startingStyle && key in props.startingStyle && target instanceof View) {
-            setValue(watchValue, true)
+            setValue(watchValue, true, true)
           } else if (watchValue !== undefined) {
-            setValue(watchValue)
+            setValue(watchValue, false, true)
           }
 
           continue
@@ -229,14 +234,14 @@ export function nativeJSX (): HandlerPlugin {
           if (!update && result === undefined) return
 
           if (!update) {
-            setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View))
+            setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View), true)
             prevValue = result
             return
           }
 
           if (prevValue === result) return
 
-          setValue(result, update)
+          setValue(result, true, false)
           prevValue = result
         })
       }
