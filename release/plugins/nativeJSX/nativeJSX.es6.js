@@ -3,10 +3,12 @@ import { ViewBase, View, Frame } from '@nativescript/core';
 import { watchValueToValueWatcher, use } from '@watch-state/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
 import { Watch, onDestroy, unwatch } from 'watch-state';
-import { ANIMATE_PROPS, PARENT_FRAME } from '../../constants.es6.js';
+import { PARENT_FRAME } from '../../constants.es6.js';
 import '../../hooks/index.es6.js';
 import '../../utils/index.es6.js';
 import { JSX_ELEMENTS, useView } from '../../hooks/useView/useView.es6.js';
+import { isAnimateProp } from '../../utils/isAnimateProp/isAnimateProp.es6.js';
+import { isAnimateParam } from '../../utils/isAnimateParam/isAnimateParam.es6.js';
 import { setParent } from '../../utils/setParent/setParent.es6.js';
 
 function nativeJSX() {
@@ -61,10 +63,19 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = watchValueToValueWatcher(value);
+                const setValue = (value) => {
+                    if (key === 'scale' && target instanceof View) {
+                        target.scaleX = value;
+                        target.scaleY = value;
+                    }
+                    else {
+                        // @ts-expect-error TODO: check it
+                        target[key] = value;
+                    }
+                };
                 if (typeof watchValue !== 'function') {
                     if (watchValue !== undefined) {
-                        // @ts-expect-error TODO: check it
-                        target[key] = watchValue;
+                        setValue(watchValue);
                     }
                     continue;
                 }
@@ -74,8 +85,7 @@ function nativeJSX() {
                     if (!update && result === undefined)
                         return;
                     if (!update) {
-                        // @ts-expect-error TODO: fix types
-                        target[key] = result;
+                        setValue(result);
                         prevValue = result;
                         return;
                     }
@@ -83,24 +93,63 @@ function nativeJSX() {
                         return;
                     prevValue = result;
                     const animate = unwatch(() => use(props.animate));
-                    if (animate && ANIMATE_PROPS.includes(key) && target instanceof View) {
+                    if (animate && isAnimateProp(key) && target instanceof View) {
+                        const options = {};
+                        if (isAnimateParam(key)) {
+                            if (key === 'scale') {
+                                options[key] = {
+                                    x: result,
+                                    y: result,
+                                };
+                            }
+                            else if (key !== 'translate') {
+                                options[key] = result;
+                            }
+                        }
+                        else {
+                            const param = key.slice(0, -1);
+                            const axis = key[key.length - 1].toLowerCase();
+                            if (param === 'rotate') {
+                                options.rotate = axis === 'x'
+                                    ? {
+                                        x: result,
+                                        y: target.rotateY,
+                                        z: target.rotate,
+                                    }
+                                    : {
+                                        x: target.rotateX,
+                                        y: result,
+                                        z: target.rotate,
+                                    };
+                            }
+                            else {
+                                options[param] = axis === 'x'
+                                    ? {
+                                        x: result,
+                                        y: target[`${param}Y`],
+                                    }
+                                    : {
+                                        x: target[`${param}X`],
+                                        y: result,
+                                    };
+                            }
+                        }
                         if (animate === true) {
-                            target.animate({ [key]: result, duration: 250 });
+                            target.animate(Object.assign(Object.assign({}, options), { duration: 250, curve: 'ease' }));
                             return;
                         }
                         if (typeof animate === 'number') {
-                            target.animate({ [key]: result, duration: animate });
+                            target.animate(Object.assign(Object.assign({}, options), { duration: animate, curve: 'ease' }));
                             return;
                         }
                         if (key in animate) {
                             const animateParams = unwatch(() => use(animate[key]));
                             const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
-                            target.animate(Object.assign({ [key]: result }, params));
+                            target.animate(Object.assign(Object.assign(Object.assign({}, options), { curve: 'ease' }), params));
                             return;
                         }
                     }
-                    // @ts-expect-error TODO: fix types
-                    target[key] = result;
+                    setValue(result);
                 });
             }
         }

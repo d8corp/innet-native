@@ -7,4 +7,6 @@ require('./Fragment/index.js');
 require('./after/index.js');
 require('./before/index.js');
 require('./Page/index.js');
+require('./isAnimateParam/index.js');
+require('./isAnimateProp/index.js');
 

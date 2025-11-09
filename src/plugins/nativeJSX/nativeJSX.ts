@@ -1,13 +1,13 @@
 import { type JSXElement, useChildren } from '@innet/jsx'
-import { Frame, View, ViewBase } from '@nativescript/core'
+import { type AnimationDefinition, Frame, View, ViewBase } from '@nativescript/core'
 import { use, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 import { onDestroy, unwatch, Watch } from 'watch-state'
 
-import { ANIMATE_PROPS, PARENT_FRAME } from '../../constants'
+import { PARENT_FRAME } from '../../constants'
 import { JSX_ELEMENTS, useView } from '../../hooks'
 import { type AnimateProp, type AnimatePropsKey } from '../../types'
-import { setParent } from '../../utils'
+import { isAnimateParam, isAnimateProp, setParent } from '../../utils'
 
 export function nativeJSX (): HandlerPlugin {
   return () => {
@@ -74,10 +74,19 @@ export function nativeJSX (): HandlerPlugin {
 
         const watchValue = watchValueToValueWatcher(value)
 
+        const setValue = (value: any) => {
+          if (key === 'scale' && target instanceof View) {
+            target.scaleX = value
+            target.scaleY = value
+          } else {
+            // @ts-expect-error TODO: check it
+            target[key] = value
+          }
+        }
+
         if (typeof watchValue !== 'function') {
           if (watchValue !== undefined) {
-            // @ts-expect-error TODO: check it
-            target[key] = watchValue
+            setValue(watchValue)
           }
 
           continue
@@ -91,24 +100,65 @@ export function nativeJSX (): HandlerPlugin {
           if (!update && result === undefined) return
 
           if (!update) {
-            // @ts-expect-error TODO: fix types
-            target[key] = result
+            setValue(result)
             prevValue = result
             return
           }
 
           if (prevValue === result) return
+
           prevValue = result
+
           const animate: AnimateProp | number | boolean = unwatch(() => use(props.animate))
 
-          if (animate && ANIMATE_PROPS.includes(key as AnimatePropsKey) && target instanceof View) {
+          if (animate && isAnimateProp(key) && target instanceof View) {
+            const options: AnimationDefinition = {}
+
+            if (isAnimateParam(key)) {
+              if (key === 'scale') {
+                options[key] = {
+                  x: result,
+                  y: result,
+                }
+              } else if (key !== 'translate') {
+                options[key] = result
+              }
+            } else {
+              const param = key.slice(0, -1) as 'scale' | 'translate' | 'rotate'
+              const axis = key[key.length - 1].toLowerCase() as 'x' | 'y'
+
+              if (param === 'rotate') {
+                options.rotate = axis === 'x'
+                  ? {
+                      x: result,
+                      y: target.rotateY,
+                      z: target.rotate,
+                    }
+                  : {
+                      x: target.rotateX,
+                      y: result,
+                      z: target.rotate,
+                    }
+              } else {
+                options[param] = axis === 'x'
+                  ? {
+                      x: result,
+                      y: target[`${param}Y`],
+                    }
+                  : {
+                      x: target[`${param}X`],
+                      y: result,
+                    }
+              }
+            }
+
             if (animate === true) {
-              target.animate({ [key]: result, duration: 250 })
+              target.animate({ ...options, duration: 250, curve: 'ease' })
               return
             }
 
             if (typeof animate === 'number') {
-              target.animate({ [key]: result, duration: animate })
+              target.animate({ ...options, duration: animate, curve: 'ease' })
               return
             }
 
@@ -116,13 +166,12 @@ export function nativeJSX (): HandlerPlugin {
               const animateParams = unwatch(() => use(animate[key as AnimatePropsKey]))
               const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams
 
-              target.animate({ [key]: result, ...params })
+              target.animate({ ...options, curve: 'ease', ...params })
               return
             }
           }
 
-          // @ts-expect-error TODO: fix types
-          target[key] = result
+          setValue(result)
         })
       }
     }

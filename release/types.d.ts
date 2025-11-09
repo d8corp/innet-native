@@ -1,7 +1,7 @@
 import { type Ref } from '@innet/utils';
 import { type AbsoluteLayout, type ActionBar, type ActionItem, type ActivityIndicator, type AnimationDefinition, type Button, type Color, type ContentView, type CoreTypes, type CreateViewEventData, type DatePicker, type DockLayout, type EventData, type FlexboxLayout, type FormattedString, type Frame, type GridLayout, type HtmlView, type Image, type ItemEventData, type ItemsSource, type Label, type ListPicker, type ListView, type NavigationButton, type NavigationEntry, type Observable as NativeObservable, type Placeholder, type Progress, type PropertyChangeData, type RootLayout, type ScrollEventData, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem, type SelectedIndexChangedEventData, type Slider, type Span, type StackLayout, type Style as NativeStyle, type Switch, type TabView, type TabViewItem, type TextBase, type TextField, type TextView, type TimePicker, type View, type ViewBase, type WebView, type WrapLayout } from '@nativescript/core';
 import { type WatchValue } from '@watch-state/utils';
-import { type ANIMATE_PROPS } from './constants';
+import { type ANIMATE_PARAMS } from './constants';
 import { type Fragment, type Page } from './utils';
 export type Style = Omit<NativeStyle, keyof NativeObservable | 'view' | 'viewRef' | 'fontInternal' | 'toString' | 'PropertyBag' | 'setScopedCssVariable' | 'setUnscopedCssVariable' | 'removeScopedCssVariable' | 'removeUnscopedCssVariable' | 'getCssVariable' | 'resetScopedCssVariables' | 'resetUnscopedCssVariables'>;
 export type ObservableStyle = {
@@ -13,7 +13,7 @@ export type NsPropertiesOnly<T> = {
 export type NsColor<T> = T extends Color ? T | string : T;
 export type NsSize<T> = T extends CoreTypes.PercentLengthType ? T | string : T;
 export type PrivateViewBaseProps = `_${string}` | 'domNode' | 'nativeViewProtected';
-export type AnimatePropsKey = typeof ANIMATE_PROPS[number];
+export type AnimatePropsKey = typeof ANIMATE_PARAMS[number];
 export type AnimateParamsKey = Exclude<keyof AnimationDefinition, AnimatePropsKey | 'target'>;
 export type AnimateParams = {
     [K in AnimateParamsKey]?: AnimationDefinition[K];
@@ -22,7 +22,6 @@ export type AnimateProp = Partial<Record<AnimatePropsKey, WatchValue<AnimatePara
 export type ViewBaseProps<T extends ViewBase> = {
     ref?: Ref<T>;
     style?: ObservableStyle;
-    animate?: WatchValue<AnimateProp | number | boolean>;
 } & {
     [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NsSize<NsColor<T[K]>>>;
 };
@@ -32,6 +31,8 @@ export type ViewProps<T extends View> = ViewBaseProps<T> & {
     onAndroidBackPressed?: (event: EventData) => void;
     onShowingModally?: (event: EventData) => void;
     onShownModally?: (event: EventData) => void;
+    scale?: WatchValue<number>;
+    animate?: WatchValue<AnimateProp | number | boolean>;
 };
 export type TextBaseProps<T extends TextBase> = ViewProps<T> & {
     children?: JSX.Element;

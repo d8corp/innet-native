@@ -5,3 +5,5 @@ import './Fragment/index.es6.js';
 import './after/index.es6.js';
 import './before/index.es6.js';
 import './Page/index.es6.js';
+import './isAnimateParam/index.es6.js';
+import './isAnimateProp/index.es6.js';

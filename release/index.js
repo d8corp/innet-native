@@ -33,9 +33,12 @@ var Fragment = require('./utils/Fragment/Fragment.js');
 var after = require('./utils/after/after.js');
 var before = require('./utils/before/before.js');
 var Page = require('./utils/Page/Page.js');
+var isAnimateParam = require('./utils/isAnimateParam/isAnimateParam.js');
+var isAnimateProp = require('./utils/isAnimateProp/isAnimateProp.js');
 
 
 
+exports.ANIMATE_PARAMS = constants.ANIMATE_PARAMS;
 exports.ANIMATE_PROPS = constants.ANIMATE_PROPS;
 exports.FOR_INDEX = constants.FOR_INDEX;
 exports.FOR_VALUE = constants.FOR_VALUE;
@@ -77,3 +80,5 @@ exports.Fragment = Fragment.Fragment;
 exports.after = after.after;
 exports.before = before.before;
 exports.Page = Page.Page;
+exports.isAnimateParam = isAnimateParam.isAnimateParam;
+exports.isAnimateProp = isAnimateProp.isAnimateProp;

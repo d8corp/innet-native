@@ -55,7 +55,7 @@ import {
 } from '@nativescript/core'
 import { type WatchValue } from '@watch-state/utils'
 
-import { type ANIMATE_PROPS } from './constants'
+import { type ANIMATE_PARAMS } from './constants'
 import { type Fragment, type Page } from './utils'
 
 export type Style = Omit<
@@ -85,7 +85,7 @@ export type NsColor<T> = T extends Color ? T | string : T
 export type NsSize<T> = T extends CoreTypes.PercentLengthType ? T | string : T
 
 export type PrivateViewBaseProps = `_${string}` | 'domNode' | 'nativeViewProtected'
-export type AnimatePropsKey = typeof ANIMATE_PROPS[number]
+export type AnimatePropsKey = typeof ANIMATE_PARAMS[number]
 export type AnimateParamsKey = Exclude<keyof AnimationDefinition, AnimatePropsKey | 'target'>
 export type AnimateParams = { [K in AnimateParamsKey]?: AnimationDefinition[K] }
 export type AnimateProp = Partial<Record<AnimatePropsKey, WatchValue<AnimateParams | number>>>
@@ -93,7 +93,6 @@ export type AnimateProp = Partial<Record<AnimatePropsKey, WatchValue<AnimatePara
 export type ViewBaseProps<T extends ViewBase> = {
   ref?: Ref<T>
   style?: ObservableStyle
-  animate?: WatchValue<AnimateProp | number | boolean>
 } & {
   [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NsSize<NsColor<T[K]>>>
 }
@@ -104,6 +103,8 @@ export type ViewProps<T extends View> = ViewBaseProps<T> & {
   onAndroidBackPressed?: (event: EventData) => void
   onShowingModally?: (event: EventData) => void
   onShownModally?: (event: EventData) => void
+  scale?: WatchValue<number>
+  animate?: WatchValue<AnimateProp | number | boolean>
 }
 
 export type TextBaseProps<T extends TextBase> = ViewProps<T> & {

@@ -11,6 +11,8 @@ var constants = require('../../constants.js');
 require('../../hooks/index.js');
 require('../../utils/index.js');
 var useView = require('../../hooks/useView/useView.js');
+var isAnimateProp = require('../../utils/isAnimateProp/isAnimateProp.js');
+var isAnimateParam = require('../../utils/isAnimateParam/isAnimateParam.js');
 var setParent = require('../../utils/setParent/setParent.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -69,10 +71,19 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = utils.watchValueToValueWatcher(value);
+                const setValue = (value) => {
+                    if (key === 'scale' && target instanceof core.View) {
+                        target.scaleX = value;
+                        target.scaleY = value;
+                    }
+                    else {
+                        // @ts-expect-error TODO: check it
+                        target[key] = value;
+                    }
+                };
                 if (typeof watchValue !== 'function') {
                     if (watchValue !== undefined) {
-                        // @ts-expect-error TODO: check it
-                        target[key] = watchValue;
+                        setValue(watchValue);
                     }
                     continue;
                 }
@@ -82,8 +93,7 @@ function nativeJSX() {
                     if (!update && result === undefined)
                         return;
                     if (!update) {
-                        // @ts-expect-error TODO: fix types
-                        target[key] = result;
+                        setValue(result);
                         prevValue = result;
                         return;
                     }
@@ -91,24 +101,63 @@ function nativeJSX() {
                         return;
                     prevValue = result;
                     const animate = watchState.unwatch(() => utils.use(props.animate));
-                    if (animate && constants.ANIMATE_PROPS.includes(key) && target instanceof core.View) {
+                    if (animate && isAnimateProp.isAnimateProp(key) && target instanceof core.View) {
+                        const options = {};
+                        if (isAnimateParam.isAnimateParam(key)) {
+                            if (key === 'scale') {
+                                options[key] = {
+                                    x: result,
+                                    y: result,
+                                };
+                            }
+                            else if (key !== 'translate') {
+                                options[key] = result;
+                            }
+                        }
+                        else {
+                            const param = key.slice(0, -1);
+                            const axis = key[key.length - 1].toLowerCase();
+                            if (param === 'rotate') {
+                                options.rotate = axis === 'x'
+                                    ? {
+                                        x: result,
+                                        y: target.rotateY,
+                                        z: target.rotate,
+                                    }
+                                    : {
+                                        x: target.rotateX,
+                                        y: result,
+                                        z: target.rotate,
+                                    };
+                            }
+                            else {
+                                options[param] = axis === 'x'
+                                    ? {
+                                        x: result,
+                                        y: target[`${param}Y`],
+                                    }
+                                    : {
+                                        x: target[`${param}X`],
+                                        y: result,
+                                    };
+                            }
+                        }
                         if (animate === true) {
-                            target.animate({ [key]: result, duration: 250 });
+                            target.animate(Object.assign(Object.assign({}, options), { duration: 250, curve: 'ease' }));
                             return;
                         }
                         if (typeof animate === 'number') {
-                            target.animate({ [key]: result, duration: animate });
+                            target.animate(Object.assign(Object.assign({}, options), { duration: animate, curve: 'ease' }));
                             return;
                         }
                         if (key in animate) {
                             const animateParams = watchState.unwatch(() => utils.use(animate[key]));
                             const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
-                            target.animate(Object.assign({ [key]: result }, params));
+                            target.animate(Object.assign(Object.assign(Object.assign({}, options), { curve: 'ease' }), params));
                             return;
                         }
                     }
-                    // @ts-expect-error TODO: fix types
-                    target[key] = result;
+                    setValue(result);
                 });
             }
         }
