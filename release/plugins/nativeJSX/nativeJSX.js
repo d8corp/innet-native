@@ -87,7 +87,7 @@ function nativeJSX() {
                         target.animate(options);
                         return;
                     }
-                    target.once('load', () => {
+                    target.once('loaded', () => {
                         new SyncTimer__default["default"](() => {
                             target.animate(options);
                         });

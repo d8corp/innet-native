@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.15 [![09.11.2025](https://img.shields.io/date/1762683371)](https://github.com/d8corp/innet-dom/tree/v0.0.15)
+
+- fixed `startingStyle` bugs
+
 ### v0.0.14 [![09.11.2025](https://img.shields.io/date/1762682702)](https://github.com/d8corp/innet-dom/tree/v0.0.14)
 
 - fixed `startingStyle` bugs

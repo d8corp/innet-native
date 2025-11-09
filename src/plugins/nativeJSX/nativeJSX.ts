@@ -90,7 +90,7 @@ export function nativeJSX (): HandlerPlugin {
             return
           }
 
-          target.once('load', () => {
+          target.once('loaded', () => {
             new SyncTimer(() => {
               target.animate(options)
             })
