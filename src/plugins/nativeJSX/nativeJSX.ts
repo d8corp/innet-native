@@ -29,7 +29,7 @@ export function nativeJSX (): HandlerPlugin {
       }
 
       let animateOptions: AnimationDefinition = {}
-      let timer: SyncTimer
+      let timer: Promise<void>
 
       const runAnimation = () => {
         if (!(target instanceof View)) return
@@ -39,8 +39,14 @@ export function nativeJSX (): HandlerPlugin {
 
       const setAnimation = (options: AnimationDefinition) => {
         Object.assign(animateOptions, options)
-        timer?.cancel()
-        timer = new SyncTimer(runAnimation)
+
+        const currentTimer = Promise.resolve().then(() => {
+          if (timer === currentTimer) {
+            runAnimation()
+          }
+        })
+
+        timer = currentTimer
       }
 
       const animate = (options: AnimationDefinition) => {

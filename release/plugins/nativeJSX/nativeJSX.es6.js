@@ -38,8 +38,12 @@ function nativeJSX() {
             };
             const setAnimation = (options) => {
                 Object.assign(animateOptions, options);
-                timer === null || timer === void 0 ? void 0 : timer.cancel();
-                timer = new SyncTimer(runAnimation);
+                const currentTimer = Promise.resolve().then(() => {
+                    if (timer === currentTimer) {
+                        runAnimation();
+                    }
+                });
+                timer = currentTimer;
             };
             const animate = (options) => {
                 if (!(target instanceof View))
