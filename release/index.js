@@ -39,6 +39,7 @@ var isAnimateProp = require('./utils/isAnimateProp/isAnimateProp.js');
 
 
 exports.ANIMATE_PARAMS = constants.ANIMATE_PARAMS;
+exports.ANIMATE_PARAMS_PROPS = constants.ANIMATE_PARAMS_PROPS;
 exports.ANIMATE_PROPS = constants.ANIMATE_PROPS;
 exports.FOR_INDEX = constants.FOR_INDEX;
 exports.FOR_VALUE = constants.FOR_VALUE;

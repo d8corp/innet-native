@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.13 [![09.11.2025](https://img.shields.io/date/1762679539)](https://github.com/d8corp/innet-dom/tree/v0.0.13)
+
+- added `startingStyle`
+
 ### v0.0.12 [![09.11.2025](https://img.shields.io/date/1762647746)](https://github.com/d8corp/innet-dom/tree/v0.0.12)
 
 - fixed `animate` property

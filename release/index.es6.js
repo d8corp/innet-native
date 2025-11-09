@@ -4,7 +4,7 @@ import './components/index.es6.js';
 import './hooks/index.es6.js';
 import './plugins/index.es6.js';
 import './utils/index.es6.js';
-export { ANIMATE_PARAMS, ANIMATE_PROPS, FOR_INDEX, FOR_VALUE, FOR_WATCHER_KEY, PARENT, PARENT_FRAME, PARENT_NAVIGATE } from './constants.es6.js';
+export { ANIMATE_PARAMS, ANIMATE_PARAMS_PROPS, ANIMATE_PROPS, FOR_INDEX, FOR_VALUE, FOR_WATCHER_KEY, PARENT, PARENT_FRAME, PARENT_NAVIGATE } from './constants.es6.js';
 import './types.es6.js';
 export { JSXPlugins, arrayPlugins, handler as default, fnPlugins, handler, nodePlugins, numberPlugins, objectPlugins, promisePlugins, stringPlugins } from './handler/handler.es6.js';
 export { Portal } from './components/Portal/Portal.es6.js';

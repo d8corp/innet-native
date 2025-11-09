@@ -13,6 +13,7 @@ import { setParent } from '../../utils/setParent/setParent.es6.js';
 
 function nativeJSX() {
     return () => {
+        var _a;
         const { type: Type, props } = useApp();
         if ((typeof Type !== 'string' || !(Type in JSX_ELEMENTS)) && !((Type === null || Type === void 0 ? void 0 : Type.prototype) instanceof ViewBase))
             return NEXT;
@@ -20,8 +21,14 @@ function nativeJSX() {
         const handler = useHandler();
         const target = useView(Type);
         if (props) {
+            if (props.startingStyle && target instanceof View) {
+                for (const key in props.startingStyle) {
+                    // @ts-expect-error TODO: fix types
+                    target[key] = props.startingStyle[key];
+                }
+            }
             for (const key in props) {
-                if (['children', 'animate'].includes(key))
+                if (['children', 'animate', 'startingStyle'].includes(key))
                     continue;
                 if (key === 'ref') {
                     if (props.ref) {
@@ -63,93 +70,109 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = watchValueToValueWatcher(value);
-                const setValue = (value) => {
-                    if (key === 'scale' && target instanceof View) {
-                        target.scaleX = value;
-                        target.scaleY = value;
+                const createAnimateOptions = () => {
+                    if (!(target instanceof View))
+                        return;
+                    const animate = unwatch(() => use(props.animate));
+                    if (!animate || !isAnimateProp(key))
+                        return;
+                    if (animate === true) {
+                        return { duration: 250, curve: 'ease' };
                     }
-                    else {
-                        // @ts-expect-error TODO: check it
-                        target[key] = value;
+                    if (typeof animate === 'number') {
+                        return { duration: animate, curve: 'ease' };
+                    }
+                    if (key in animate) {
+                        const animateParams = unwatch(() => use(animate[key]));
+                        const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
+                        return Object.assign({ curve: 'ease' }, params);
                     }
                 };
+                const getAnimateOptions = (result) => {
+                    const options = createAnimateOptions();
+                    if (!options)
+                        return;
+                    if (isAnimateParam(key)) {
+                        if (key === 'scale') {
+                            options[key] = {
+                                x: result,
+                                y: result,
+                            };
+                        }
+                        else {
+                            options[key] = result;
+                        }
+                        return options;
+                    }
+                    const param = key.slice(0, -1);
+                    const axis = key[key.length - 1].toLowerCase();
+                    if (param === 'rotate') {
+                        options.rotate = axis === 'x'
+                            ? {
+                                x: result,
+                                y: target.rotateY,
+                                z: target.rotate,
+                            }
+                            : {
+                                x: target.rotateX,
+                                y: result,
+                                z: target.rotate,
+                            };
+                    }
+                    else {
+                        options[param] = axis === 'x'
+                            ? {
+                                x: result,
+                                y: target[`${param}Y`],
+                            }
+                            : {
+                                x: target[`${param}X`],
+                                y: result,
+                            };
+                    }
+                    return options;
+                };
+                const setValue = (value, update) => {
+                    if (target instanceof View) {
+                        if (update) {
+                            const options = getAnimateOptions(value);
+                            if (options) {
+                                target.animate(options);
+                                return;
+                            }
+                        }
+                        if (key === 'scale') {
+                            target.scaleX = value;
+                            target.scaleY = value;
+                            return;
+                        }
+                    }
+                    // @ts-expect-error TODO: check it
+                    target[key] = value;
+                };
                 if (typeof watchValue !== 'function') {
-                    if (watchValue !== undefined) {
+                    if (props.startingStyle && key in props.startingStyle && target instanceof View) {
+                        setValue(watchValue, true);
+                    }
+                    else if (watchValue !== undefined) {
                         setValue(watchValue);
                     }
                     continue;
                 }
-                let prevValue;
+                let prevValue = (_a = props.startingStyle) === null || _a === void 0 ? void 0 : _a[key];
                 new Watch(update => {
                     const result = watchValue(update);
                     if (!update && result === undefined)
                         return;
                     if (!update) {
-                        setValue(result);
+                        setValue(watchValue, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View));
                         prevValue = result;
                         return;
                     }
                     if (prevValue === result)
                         return;
+                    setValue(result, update);
                     prevValue = result;
-                    const animate = unwatch(() => use(props.animate));
-                    if (animate && isAnimateProp(key) && target instanceof View) {
-                        const options = {};
-                        if (isAnimateParam(key)) {
-                            if (key === 'scale') {
-                                options[key] = {
-                                    x: result,
-                                    y: result,
-                                };
-                            }
-                            else if (key !== 'translate') {
-                                options[key] = result;
-                            }
-                        }
-                        else {
-                            const param = key.slice(0, -1);
-                            const axis = key[key.length - 1].toLowerCase();
-                            if (param === 'rotate') {
-                                options.rotate = axis === 'x'
-                                    ? {
-                                        x: result,
-                                        y: target.rotateY,
-                                        z: target.rotate,
-                                    }
-                                    : {
-                                        x: target.rotateX,
-                                        y: result,
-                                        z: target.rotate,
-                                    };
-                            }
-                            else {
-                                options[param] = axis === 'x'
-                                    ? {
-                                        x: result,
-                                        y: target[`${param}Y`],
-                                    }
-                                    : {
-                                        x: target[`${param}X`],
-                                        y: result,
-                                    };
-                            }
-                        }
-                        if (animate === true) {
-                            target.animate(Object.assign(Object.assign({}, options), { duration: 250, curve: 'ease' }));
-                            return;
-                        }
-                        if (typeof animate === 'number') {
-                            target.animate(Object.assign(Object.assign({}, options), { duration: animate, curve: 'ease' }));
-                            return;
-                        }
-                        if (key in animate) {
-                            const animateParams = unwatch(() => use(animate[key]));
-                            const params = typeof animateParams === 'number' ? { duration: animateParams } : animateParams;
-                            target.animate(Object.assign(Object.assign(Object.assign({}, options), { curve: 'ease' }), params));
-                            return;
-                        }
-                    }
-                    setValue(result);
                 });
             }
         }

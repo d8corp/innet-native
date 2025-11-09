@@ -4,17 +4,20 @@ const FOR_INDEX = Symbol('FOR_INDEX');
 const FOR_WATCHER_KEY = Symbol('FOR_WATCHER_KEY');
 const PARENT_FRAME = Symbol('PARENT_FRAME');
 const PARENT_NAVIGATE = Symbol('PARENT_NAVIGATE');
-const ANIMATE_PARAMS = [
+const ANIMATE_PARAMS_PROPS = [
     'height',
     'width',
     'opacity',
     'backgroundColor',
     'rotate',
     'scale',
+];
+const ANIMATE_PARAMS = [
+    ...ANIMATE_PARAMS_PROPS,
     'translate',
 ];
 const ANIMATE_PROPS = [
-    ...ANIMATE_PARAMS,
+    ...ANIMATE_PARAMS_PROPS,
     'scaleX',
     'scaleY',
     'translateX',
@@ -23,4 +26,4 @@ const ANIMATE_PROPS = [
     'rotateY',
 ];
 
-export { ANIMATE_PARAMS, ANIMATE_PROPS, FOR_INDEX, FOR_VALUE, FOR_WATCHER_KEY, PARENT, PARENT_FRAME, PARENT_NAVIGATE };
+export { ANIMATE_PARAMS, ANIMATE_PARAMS_PROPS, ANIMATE_PROPS, FOR_INDEX, FOR_VALUE, FOR_WATCHER_KEY, PARENT, PARENT_FRAME, PARENT_NAVIGATE };
