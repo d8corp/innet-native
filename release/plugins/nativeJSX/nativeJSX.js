@@ -37,6 +37,32 @@ function nativeJSX() {
                     target[key] = props.startingStyle[key];
                 }
             }
+            let animateOptions = {};
+            let timer;
+            const runAnimation = () => {
+                if (!(target instanceof core.View))
+                    return;
+                target.animate(animateOptions);
+                animateOptions = {};
+            };
+            const setAnimation = (options) => {
+                Object.assign(animateOptions, options);
+                timer === null || timer === void 0 ? void 0 : timer.cancel();
+                timer = new SyncTimer__default["default"](runAnimation);
+            };
+            const animate = (options) => {
+                if (!(target instanceof core.View))
+                    return;
+                if (target.isLoaded) {
+                    setAnimation(options);
+                    return;
+                }
+                target.once('loaded', () => {
+                    new SyncTimer__default["default"](() => {
+                        setAnimation(options);
+                    });
+                });
+            };
             for (const key in props) {
                 if (['children', 'animate', 'startingStyle'].includes(key))
                     continue;
@@ -80,19 +106,6 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = utils.watchValueToValueWatcher(value);
-                const animate = (options) => {
-                    if (!(target instanceof core.View))
-                        return;
-                    if (target.isLoaded) {
-                        target.animate(options);
-                        return;
-                    }
-                    target.once('loaded', () => {
-                        new SyncTimer__default["default"](() => {
-                            target.animate(options);
-                        });
-                    });
-                };
                 const createAnimateOptions = () => {
                     if (!(target instanceof core.View))
                         return;

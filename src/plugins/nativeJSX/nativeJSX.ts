@@ -28,6 +28,36 @@ export function nativeJSX (): HandlerPlugin {
         }
       }
 
+      let animateOptions: AnimationDefinition = {}
+      let timer: SyncTimer
+
+      const runAnimation = () => {
+        if (!(target instanceof View)) return
+        target.animate(animateOptions)
+        animateOptions = {}
+      }
+
+      const setAnimation = (options: AnimationDefinition) => {
+        Object.assign(animateOptions, options)
+        timer?.cancel()
+        timer = new SyncTimer(runAnimation)
+      }
+
+      const animate = (options: AnimationDefinition) => {
+        if (!(target instanceof View)) return
+
+        if (target.isLoaded) {
+          setAnimation(options)
+          return
+        }
+
+        target.once('loaded', () => {
+          new SyncTimer(() => {
+            setAnimation(options)
+          })
+        })
+      }
+
       for (const key in props) {
         if (['children', 'animate', 'startingStyle'].includes(key)) continue
 
@@ -81,21 +111,6 @@ export function nativeJSX (): HandlerPlugin {
         }
 
         const watchValue = watchValueToValueWatcher(value)
-
-        const animate = (options: AnimationDefinition) => {
-          if (!(target instanceof View)) return
-
-          if (target.isLoaded) {
-            target.animate(options)
-            return
-          }
-
-          target.once('loaded', () => {
-            new SyncTimer(() => {
-              target.animate(options)
-            })
-          })
-        }
 
         const createAnimateOptions = (): undefined | AnimationDefinition => {
           if (!(target instanceof View)) return
