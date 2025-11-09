@@ -2,6 +2,7 @@ import { type JSXElement, useChildren } from '@innet/jsx'
 import { type AnimationDefinition, Frame, View, ViewBase } from '@nativescript/core'
 import { use, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
+import SyncTimer from 'sync-timer'
 import { onDestroy, unwatch, Watch } from 'watch-state'
 
 import { PARENT_FRAME } from '../../constants'
@@ -81,6 +82,21 @@ export function nativeJSX (): HandlerPlugin {
 
         const watchValue = watchValueToValueWatcher(value)
 
+        const animate = (options: AnimationDefinition) => {
+          if (!(target instanceof View)) return
+
+          if (target.isLoaded) {
+            target.animate(options)
+            return
+          }
+
+          target.once('load', () => {
+            new SyncTimer(() => {
+              target.animate(options)
+            })
+          })
+        }
+
         const createAnimateOptions = (): undefined | AnimationDefinition => {
           if (!(target instanceof View)) return
 
@@ -158,7 +174,7 @@ export function nativeJSX (): HandlerPlugin {
               const options = getAnimateOptions(value)
 
               if (options) {
-                target.animate(options)
+                animate(options)
                 return
               }
             }
@@ -192,7 +208,7 @@ export function nativeJSX (): HandlerPlugin {
           if (!update && result === undefined) return
 
           if (!update) {
-            setValue(watchValue, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View))
+            setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View))
             prevValue = result
             return
           }

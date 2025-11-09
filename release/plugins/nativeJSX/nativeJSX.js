@@ -6,6 +6,7 @@ var jsx = require('@innet/jsx');
 var core = require('@nativescript/core');
 var utils = require('@watch-state/utils');
 var innet = require('innet');
+var SyncTimer = require('sync-timer');
 var watchState = require('watch-state');
 var constants = require('../../constants.js');
 require('../../hooks/index.js');
@@ -18,6 +19,7 @@ var setParent = require('../../utils/setParent/setParent.js');
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var innet__default = /*#__PURE__*/_interopDefaultLegacy(innet);
+var SyncTimer__default = /*#__PURE__*/_interopDefaultLegacy(SyncTimer);
 
 function nativeJSX() {
     return () => {
@@ -78,6 +80,19 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = utils.watchValueToValueWatcher(value);
+                const animate = (options) => {
+                    if (!(target instanceof core.View))
+                        return;
+                    if (target.isLoaded) {
+                        target.animate(options);
+                        return;
+                    }
+                    target.once('load', () => {
+                        new SyncTimer__default["default"](() => {
+                            target.animate(options);
+                        });
+                    });
+                };
                 const createAnimateOptions = () => {
                     if (!(target instanceof core.View))
                         return;
@@ -145,7 +160,7 @@ function nativeJSX() {
                         if (update) {
                             const options = getAnimateOptions(value);
                             if (options) {
-                                target.animate(options);
+                                animate(options);
                                 return;
                             }
                         }
@@ -173,7 +188,7 @@ function nativeJSX() {
                     if (!update && result === undefined)
                         return;
                     if (!update) {
-                        setValue(watchValue, Boolean(props.startingStyle && key in props.startingStyle && target instanceof core.View));
+                        setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof core.View));
                         prevValue = result;
                         return;
                     }

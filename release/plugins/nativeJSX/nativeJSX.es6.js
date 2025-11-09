@@ -2,6 +2,7 @@ import { useChildren } from '@innet/jsx';
 import { ViewBase, View, Frame } from '@nativescript/core';
 import { watchValueToValueWatcher, use } from '@watch-state/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
+import SyncTimer from 'sync-timer';
 import { Watch, onDestroy, unwatch } from 'watch-state';
 import { PARENT_FRAME } from '../../constants.es6.js';
 import '../../hooks/index.es6.js';
@@ -70,6 +71,19 @@ function nativeJSX() {
                     continue;
                 }
                 const watchValue = watchValueToValueWatcher(value);
+                const animate = (options) => {
+                    if (!(target instanceof View))
+                        return;
+                    if (target.isLoaded) {
+                        target.animate(options);
+                        return;
+                    }
+                    target.once('load', () => {
+                        new SyncTimer(() => {
+                            target.animate(options);
+                        });
+                    });
+                };
                 const createAnimateOptions = () => {
                     if (!(target instanceof View))
                         return;
@@ -137,7 +151,7 @@ function nativeJSX() {
                         if (update) {
                             const options = getAnimateOptions(value);
                             if (options) {
-                                target.animate(options);
+                                animate(options);
                                 return;
                             }
                         }
@@ -165,7 +179,7 @@ function nativeJSX() {
                     if (!update && result === undefined)
                         return;
                     if (!update) {
-                        setValue(watchValue, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View));
+                        setValue(result, Boolean(props.startingStyle && key in props.startingStyle && target instanceof View));
                         prevValue = result;
                         return;
                     }
