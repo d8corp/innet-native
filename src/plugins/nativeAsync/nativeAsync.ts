@@ -1,13 +1,14 @@
 import innet, { type HandlerPlugin, useApp, useHandler } from 'innet'
 import { onDestroy, scope } from 'watch-state'
 
-import { useChildrenHandler, useView } from '../../hooks'
+import { useChildrenHandler } from '../../hooks'
+import { Fragment } from '../../utils'
 
 export function nativeAsync (): HandlerPlugin {
   return () => {
     const handler = useHandler()
     const app = useApp<Promise<any>>()
-    const fragment = useView('fragment')
+    const fragment = new Fragment()
     const childHandler = useChildrenHandler(fragment)
 
     innet(fragment, handler)

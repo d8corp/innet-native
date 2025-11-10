@@ -90,7 +90,7 @@ export type AnimatePropsKey = typeof ANIMATE_PROPS[number]
 export type AnimateParamsKey = Exclude<keyof AnimationDefinition, AnimatePropsParamsKey | 'target'>
 export type AnimateParams = { [K in AnimateParamsKey]?: AnimationDefinition[K] }
 export type AnimateProp = Partial<Record<AnimatePropsParamsKey, WatchValue<AnimateParams | number>>>
-export type StartingStyle = { [K in AnimatePropsKey]?: WatchValue<K extends keyof View ? View[K] : number> }
+export type AnimateProps = { [K in AnimatePropsKey]?: WatchValue<K extends keyof View ? View[K] : number> }
 
 export type ViewBaseProps<T extends ViewBase> = {
   ref?: Ref<T>
@@ -107,7 +107,8 @@ export type ViewProps<T extends View> = ViewBaseProps<T> & {
   onShownModally?: (event: EventData) => void
   scale?: WatchValue<number>
   animate?: WatchValue<AnimateProp | number | boolean>
-  startingStyle?: StartingStyle
+  startingStyle?: AnimateProps
+  endingStyle?: AnimateProps
 }
 
 export type TextBaseProps<T extends TextBase> = ViewProps<T> & {

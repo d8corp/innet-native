@@ -5,7 +5,6 @@ import {
   RootLayout, ScrollView, SearchBar, SegmentedBar, SegmentedBarItem, Slider, Span, StackLayout,
   Switch, TabView, TabViewItem, TextField, TextView, TimePicker, type ViewBase, WebView, WrapLayout,
 } from '@nativescript/core'
-import { onDestroy } from 'watch-state'
 
 import { Fragment, Page } from '../../utils'
 
@@ -49,17 +48,9 @@ export const JSX_ELEMENTS = {
   'web-view': WebView,
 } satisfies Record<string, typeof ViewBase>
 
-export type ViewElement = keyof typeof JSX_ELEMENTS
-export type ViewElements = typeof JSX_ELEMENTS
+export type ViewTagName = keyof typeof JSX_ELEMENTS
+export type TagNameView = typeof JSX_ELEMENTS
 
-export function useView<T extends typeof ViewBase> (view: T): T['prototype']
-export function useView<T extends ViewElement> (tagName: T): InstanceType<ViewElements[T]>
-export function useView (Target: ViewElement | (new () => ViewBase)): ViewBase {
-  const view = typeof Target === 'string' ? new JSX_ELEMENTS[Target]() : new Target()
-
-  onDestroy(() => {
-    view.destroyNode()
-  })
-
-  return view
+export function createView<T extends ViewTagName> (tagName: T): InstanceType<TagNameView[T]> {
+  return new JSX_ELEMENTS[tagName]() as InstanceType<TagNameView[T]>
 }

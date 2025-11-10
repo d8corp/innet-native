@@ -3,7 +3,8 @@ import { callHandler } from '@innet/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 import { onDestroy, scope, Watch } from 'watch-state'
 
-import { useChildrenHandler, useView } from '../../hooks'
+import { useChildrenHandler } from '../../hooks'
+import { Fragment } from '../../utils'
 
 export const nativeIterable = (): HandlerPlugin => () => {
   const genericComponent = useApp()
@@ -19,7 +20,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
     return
   }
 
-  const fragment = useView('fragment')
+  const fragment = new Fragment()
   const childrenHandler = useChildrenHandler(fragment)
 
   const { activeWatcher } = scope

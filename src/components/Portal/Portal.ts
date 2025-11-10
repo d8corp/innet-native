@@ -2,7 +2,8 @@ import { type LayoutBase } from '@nativescript/core'
 import innet from 'innet'
 import { onDestroy } from 'watch-state'
 
-import { useChildrenHandler, useView } from '../../hooks'
+import { useChildrenHandler } from '../../hooks'
+import { Fragment } from '../../utils'
 
 export interface PortalProps {
   parent: LayoutBase
@@ -10,7 +11,7 @@ export interface PortalProps {
 }
 
 export function Portal ({ parent, children }: PortalProps) {
-  const fragment = useView('fragment')
+  const fragment = new Fragment()
   const childHandler = useChildrenHandler(fragment)
 
   parent.addChild(fragment)

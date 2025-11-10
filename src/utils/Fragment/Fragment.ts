@@ -1,5 +1,7 @@
 import { ProxyViewContainer, type View } from '@nativescript/core'
 
+import { getViewEndingAnimate } from '../getViewEndingAnimate'
+
 export class Fragment extends ProxyViewContainer {
   #shown = true
   #shadow: View[] = []
@@ -66,7 +68,20 @@ export class Fragment extends ProxyViewContainer {
     this.#shadow = []
 
     if (this.#shown) {
-      super.removeChildren()
+      this.eachChildView((view) => {
+        const animation = getViewEndingAnimate(view)
+
+        if (!animation) {
+          this.removeChild(view)
+          return true
+        }
+
+        view.animate(animation).then(() => {
+          this.removeChild(view)
+        })
+
+        return true
+      })
     }
   }
 }

@@ -2,7 +2,8 @@ import { Span } from '@nativescript/core'
 import innet, { type HandlerPlugin, useApp, useHandler } from 'innet'
 import { Watch } from 'watch-state'
 
-import { useChildrenHandler, useParent, useView } from '../../hooks'
+import { useChildrenHandler, useParent } from '../../hooks'
+import { Fragment } from '../../utils'
 
 export function nativeFn (): HandlerPlugin {
   return () => {
@@ -17,7 +18,7 @@ export function nativeFn (): HandlerPlugin {
       return
     }
 
-    const fragment = useView('fragment')
+    const fragment = new Fragment()
     const childrenHandler = useChildrenHandler(fragment)
 
     innet(fragment, useHandler())

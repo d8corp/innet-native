@@ -6,6 +6,7 @@ export const FOR_INDEX = Symbol('FOR_INDEX') as unknown as string
 export const FOR_WATCHER_KEY = Symbol('FOR_WATCHER_KEY') as unknown as string
 export const PARENT_FRAME = Symbol('PARENT_FRAME') as unknown as string
 export const PARENT_NAVIGATE = Symbol('PARENT_NAVIGATE') as unknown as string
+export const ENDING_ANIMATE = Symbol('ENDING_ANIMATE')
 
 export const ANIMATE_PARAMS_PROPS = [
   'height',
