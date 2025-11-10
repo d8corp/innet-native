@@ -6,7 +6,8 @@ import {
   Switch, TabView, TabViewItem, TextField, TextView, TimePicker, type ViewBase, WebView, WrapLayout,
 } from '@nativescript/core'
 
-import { Fragment, Page } from '../../utils'
+import { Fragment } from '../Fragment'
+import { Page } from '../Page'
 
 export const JSX_ELEMENTS = {
   label: Label,

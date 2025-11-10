@@ -2,8 +2,8 @@ import { type JSXElement } from '@innet/jsx'
 import { ViewBase } from '@nativescript/core'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 
-import { JSX_ELEMENTS, useNativeChildren, useNativeProps } from '../../hooks'
-import { createView, type ViewTagName } from '../../utils'
+import { useNativeChildren, useNativeProps } from '../../hooks'
+import { createView, JSX_ELEMENTS, type ViewTagName } from '../../utils'
 
 export function nativeJSX (): HandlerPlugin {
   return () => {
