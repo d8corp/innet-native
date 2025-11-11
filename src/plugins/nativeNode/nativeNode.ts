@@ -19,7 +19,7 @@ import { type HandlerPlugin, useApp, useHandler } from 'innet'
 
 import { PARENT_FRAME } from '../../constants'
 import { useParent } from '../../hooks'
-import { Page } from '../../utils'
+import { InPage } from '../../utils'
 
 export function nativeNode (): HandlerPlugin {
   return () => {
@@ -35,7 +35,7 @@ export function nativeNode (): HandlerPlugin {
       throw Error('Unexpected element used as a root view')
     }
 
-    if (app instanceof Page) {
+    if (app instanceof InPage) {
       const handler = useHandler()
       const frame: Frame = handler[PARENT_FRAME]
 
@@ -70,7 +70,7 @@ export function nativeNode (): HandlerPlugin {
     }
 
     if (app instanceof ActionBar) {
-      if (parent instanceof Page) {
+      if (parent instanceof InPage) {
         parent.actionBar = app
         return
       }

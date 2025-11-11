@@ -1,7 +1,8 @@
 import { ProxyViewContainer, type View } from '@nativescript/core'
 
-import { getViewEndingAnimate } from '../getViewEndingAnimate'
+import { getViewEndingAnimate } from '../../getViewEndingAnimate'
 
+/** @deprecated Temporary solution */
 export class Fragment extends ProxyViewContainer {
   #shown = true
   #shadow: View[] = []

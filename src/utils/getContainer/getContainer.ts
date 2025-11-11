@@ -3,9 +3,9 @@ import { LayoutBase } from '@nativescript/core'
 import { type Handler } from 'innet'
 import { onDestroy } from 'watch-state'
 
-import { Fragment } from '../Fragment'
 import { getParent } from '../getParent'
 import { setParent } from '../setParent'
+import { Fragment } from '../views'
 
 export function getContainer (
   handler: Handler,

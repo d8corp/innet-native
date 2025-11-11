@@ -6,8 +6,7 @@ import {
   Switch, TabView, TabViewItem, TextField, TextView, TimePicker, type ViewBase, WebView, WrapLayout,
 } from '@nativescript/core'
 
-import { Fragment } from '../Fragment'
-import { Page } from '../Page'
+import { Fragment, InPage } from '../views'
 
 export const JSX_ELEMENTS = {
   label: Label,
@@ -23,7 +22,7 @@ export const JSX_ELEMENTS = {
   'dock-layout': DockLayout,
   'absolute-layout': AbsoluteLayout,
   frame: Frame,
-  page: Page,
+  page: InPage,
   'action-bar': ActionBar,
   'action-item': ActionItem,
   fragment: Fragment,

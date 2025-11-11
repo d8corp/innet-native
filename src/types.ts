@@ -56,7 +56,7 @@ import {
 import { type WatchValue } from '@watch-state/utils'
 
 import { type ANIMATE_PARAMS, type ANIMATE_PROPS } from './constants'
-import { type Fragment, type Page } from './utils'
+import { type Fragment, type InPage } from './utils'
 
 export type Style = Omit<
 NativeStyle,
@@ -124,7 +124,6 @@ export type ChildrenViewProps<T extends View> = ViewProps<T> & {
 }
 
 export type SpanProps = ViewBaseProps<Span> & {
-  children?: WatchValue<string | number>
   onLinkTap?: (event: EventData) => void
 }
 
@@ -219,7 +218,7 @@ export type ActivityIndicatorProps = ViewProps<ActivityIndicator>
 export type DatePickerProps = ViewProps<DatePicker>
 export type HtmlViewProps = ViewProps<HtmlView>
 export type FlexboxLayoutProps = ChildrenViewProps<FlexboxLayout>
-export type PageProps = ChildrenViewProps<Page>
+export type PageProps = ChildrenViewProps<InPage>
 export type ActionBarProps = ChildrenViewProps<ActionBar>
 export type GridLayoutProps = ChildrenViewProps<GridLayout>
 export type StackLayoutProps = ChildrenViewProps<StackLayout>
