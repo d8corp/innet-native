@@ -1,4 +1,3 @@
-import { Ref } from '@innet/utils'
 import {
   ActionBar,
   ActionItem,
@@ -13,7 +12,7 @@ import {
   TabViewItem,
   TextBase,
   View,
-  ViewBase,
+  type ViewBase,
 } from '@nativescript/core'
 import { type HandlerPlugin, useApp, useHandler } from 'innet'
 
@@ -24,15 +23,11 @@ import { InPage } from '../../utils'
 export function nativeNode (): HandlerPlugin {
   return () => {
     const parent = useParent()
-    const app = useApp()
+    const app = useApp<ViewBase>()
 
-    if (parent instanceof Ref) {
-      if (app instanceof View) {
-        parent.value = app
-        return
-      }
-
-      throw Error('Unexpected element used as a root view')
+    if (typeof parent === 'function') {
+      parent(app)
+      return
     }
 
     if (app instanceof InPage) {
@@ -143,10 +138,6 @@ export function nativeNode (): HandlerPlugin {
       throw Error(`${app.typeName} cannot be in ${parent.typeName}`)
     }
 
-    if (app instanceof ViewBase) {
-      throw Error(`${app.typeName} cannot be in ${parent.typeName}`)
-    }
-
-    throw Error(`Unknown element in ${parent.typeName}`)
+    throw Error(`${app.typeName} cannot be in ${parent.typeName}`)
   }
 }

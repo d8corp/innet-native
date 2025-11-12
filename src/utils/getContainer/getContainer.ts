@@ -1,4 +1,3 @@
-import { Ref } from '@innet/utils'
 import { LayoutBase } from '@nativescript/core'
 import { type Handler } from 'innet'
 import { onDestroy } from 'watch-state'
@@ -16,8 +15,8 @@ export function getContainer (
   const childHandler: Handler = Object.create(handler)
   setParent(childHandler, container)
 
-  if (parent instanceof Ref) {
-    parent.value = container
+  if (typeof parent === 'function') {
+    parent(container)
     return [childHandler, container] as const
   }
 

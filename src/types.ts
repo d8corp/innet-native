@@ -233,4 +233,5 @@ export type WebViewProps = ViewProps<WebView> & {
   onLoadFinished?: (event: EventData) => void
 }
 
-export type Parent = ViewBase | Ref<ViewBase>
+export type ViewSetter<T extends ViewBase = ViewBase> = (view: T) => void
+export type Parent<T extends ViewBase = ViewBase> = T | ViewSetter<T>

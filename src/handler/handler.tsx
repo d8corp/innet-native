@@ -10,10 +10,10 @@ import {
   nullish,
   number,
   object,
-  promise, Ref,
+  promise,
   string,
 } from '@innet/utils'
-import { Application, type View } from '@nativescript/core'
+import { Application, View } from '@nativescript/core'
 import innet, { createHandler, useApp } from 'innet'
 import { type Observable } from 'watch-state'
 
@@ -113,21 +113,17 @@ const handlerInner = createHandler([
 export const handler = createHandler([
   () => () => {
     const app = useApp()
+    const handler = Object.create(handlerInner)
 
-    Application.run({
-      create: () => {
-        const root = new Ref<View>()
-        const handler = Object.create(handlerInner)
-        setParent(handler, root)
-        innet(app, handler)
+    setParent(handler, (view) => {
+      if (!(view instanceof View)) {
+        throw Error(`Unknown view ${String(view)} used as root`)
+      }
 
-        if (!root.value) {
-          throw Error('No View Provided')
-        }
-
-        return root.value
-      },
+      Application.run({ create: () => view })
     })
+
+    innet(app, handler)
   },
 ])
 

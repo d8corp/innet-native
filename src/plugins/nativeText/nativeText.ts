@@ -8,6 +8,13 @@ export function nativeText (): HandlerPlugin {
     const app = useApp<string>()
     const parent = useParent()
 
+    if (typeof parent === 'function') {
+      const label = new Label()
+      label.text = app
+      parent(label)
+      return
+    }
+
     if (parent instanceof TextBase) {
       parent.text = `${parent.text ?? ''}${app}`
       return
