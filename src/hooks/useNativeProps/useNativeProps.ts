@@ -1,13 +1,15 @@
 import { type Props, useProps } from '@innet/jsx'
 import { type AnimationDefinition, View, type ViewBase } from '@nativescript/core'
 import { use, watchValueToValueWatcher } from '@watch-state/utils'
+import innet, { useHandler } from 'innet'
 import SyncTimer from 'sync-timer'
 import { onDestroy, unwatch, Watch } from 'watch-state'
 
-import type { AnimateProp, AnimatePropsParamsKey } from '../../types'
-import { isAnimateParam, isAnimateProp, setViewEndingAnimate } from '../../utils'
+import { RENDER_PROPS } from '../../constants'
+import type { AnimateProp, AnimatePropsParamsKey, ViewTagName } from '../../types'
+import { isAnimateParam, isAnimateProp, setParent, setViewEndingAnimate } from '../../utils'
 
-export function useNativeProps (target: ViewBase) {
+export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
   const props = useProps<Props>()
 
   if (target instanceof View) {
@@ -149,6 +151,35 @@ export function useNativeProps (target: ViewBase) {
         }
       }
 
+      continue
+    }
+
+    if (tagName && tagName in RENDER_PROPS && key in RENDER_PROPS[tagName as keyof typeof RENDER_PROPS]) {
+      const tag = tagName as keyof typeof RENDER_PROPS
+      const tagView = RENDER_PROPS[tag][key as keyof typeof RENDER_PROPS[typeof tag]]
+      const propHandler = Object.create(useHandler())
+
+      setParent(propHandler, (view) => {
+        if (view instanceof tagView) {
+          // @ts-expect-error TODO: check types
+          target[key] = view
+          return
+        }
+
+        throw Error(`You cannot use ${String(view)} in <${tagName} ${key}={...}>`)
+      })
+
+      const watchValue = watchValueToValueWatcher(value)
+
+      if (typeof watchValue === 'function') {
+        new Watch((update) => {
+          innet(use(watchValue, update), propHandler)
+        })
+
+        continue
+      }
+
+      innet(watchValue, propHandler)
       continue
     }
 

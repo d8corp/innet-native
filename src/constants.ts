@@ -1,53 +1,20 @@
-import type { AnimationDefinition, ViewBase } from '@nativescript/core'
+import type { AnimationDefinition } from '@nativescript/core'
 import {
-  AbsoluteLayout, ActionBar, ActionItem, ActivityIndicator, Button, DatePicker, DockLayout,
-  FlexboxLayout, FormattedString, Frame, GridLayout, HtmlView, Image,
-  Label, ListPicker, ListView, NavigationButton, Placeholder, Progress,
-  RootLayout, ScrollView, SearchBar, SegmentedBar, SegmentedBarItem, Slider, Span, StackLayout,
-  Switch, TabView, TabViewItem, TextField, TextView, TimePicker, WebView, WrapLayout,
+  ActionBar,
 } from '@nativescript/core'
 
-import { Fragment, InPage } from './utils/views'
+import { type JSX_ELEMENTS } from './elements'
+import { type ViewProp, type ViewTagName } from './types'
 
-export const JSX_ELEMENTS = {
-  label: Label,
-  'root-layout': RootLayout,
-  'flexbox-layout': FlexboxLayout,
-  'formatted-string': FormattedString,
-  switch: Switch,
-  button: Button,
-  span: Span,
-  'stack-layout': StackLayout,
-  'grid-layout': GridLayout,
-  'wrap-layout': WrapLayout,
-  'dock-layout': DockLayout,
-  'absolute-layout': AbsoluteLayout,
-  frame: Frame,
-  page: InPage,
-  'action-bar': ActionBar,
-  'action-item': ActionItem,
-  fragment: Fragment,
-  image: Image,
-  'navigation-button': NavigationButton,
-  'activity-indicator': ActivityIndicator,
-  'date-picker': DatePicker,
-  'html-view': HtmlView,
-  'list-picker': ListPicker,
-  'list-view': ListView,
-  placeholder: Placeholder,
-  progress: Progress,
-  'scroll-view': ScrollView,
-  'search-bar': SearchBar,
-  'segmented-bar': SegmentedBar,
-  'segmented-bar-item': SegmentedBarItem,
-  slider: Slider,
-  'tab-view': TabView,
-  'tab-view-item': TabViewItem,
-  'text-field': TextField,
-  'text-view': TextView,
-  'time-picker': TimePicker,
-  'web-view': WebView,
-} satisfies Record<string, typeof ViewBase>
+export const RENDER_PROPS = {
+  page: {
+    actionBar: ActionBar,
+  },
+} as const satisfies {
+  readonly [T in ViewTagName]?: {
+    readonly [K in ViewProp<T>]?: new () => InstanceType<typeof JSX_ELEMENTS[T]>[K]
+  };
+}
 
 export const PARENT = Symbol('parent') as unknown as string
 export const FOR_VALUE = Symbol('FOR_VALUE') as unknown as string
