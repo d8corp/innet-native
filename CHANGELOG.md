@@ -2,6 +2,13 @@
 
 ## v0.0
 
+### v0.0.18 [![14.11.2025](https://img.shields.io/date/1763149975)](https://github.com/d8corp/innet-dom/tree/v0.0.18)
+
+- Add `endingStyle`
+- Render props for `Page.actionBar`
+- Use `innet@2.0.0-beta.2`
+- Add `onMount` and `useMount`
+
 ### v0.0.17 [![09.11.2025](https://img.shields.io/date/1762689108)](https://github.com/d8corp/innet-dom/tree/v0.0.17)
 
 - fixed animation bugs

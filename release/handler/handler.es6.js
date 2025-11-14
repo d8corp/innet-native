@@ -1,6 +1,6 @@
 import { jsxComponent, jsxPlugins } from '@innet/jsx';
-import { arraySync, nullish, promise, fn, string, number, array, object, Ref } from '@innet/utils';
-import { Application } from '@nativescript/core';
+import { arraySync, nullish, promise, fn, string, number, array, object, callHandler } from '@innet/utils';
+import { View, Application } from '@nativescript/core';
 import innet, { createHandler, useApp } from 'innet';
 import '../plugins/index.es6.js';
 import '../utils/index.es6.js';
@@ -53,18 +53,16 @@ const handlerInner = createHandler([
 const handler = createHandler([
     () => () => {
         const app = useApp();
-        Application.run({
-            create: () => {
-                const root = new Ref();
-                const handler = Object.create(handlerInner);
-                setParent(handler, root);
-                innet(app, handler);
-                if (!root.value) {
-                    throw Error('No View Provided');
-                }
-                return root.value;
-            },
+        const handler = Object.create(handlerInner);
+        setParent(handler, (view) => {
+            if (!(view instanceof View)) {
+                throw Error(`Unknown view ${String(view)} used as root`);
+            }
+            innet(() => {
+                Application.run({ create: () => view });
+            }, callHandler, 3);
         });
+        innet(app, handler);
     },
 ]);
 

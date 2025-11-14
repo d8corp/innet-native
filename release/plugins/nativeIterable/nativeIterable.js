@@ -8,7 +8,8 @@ var utils = require('@innet/utils');
 var innet = require('innet');
 var watchState = require('watch-state');
 require('../../hooks/index.js');
-var useView = require('../../hooks/useView/useView.js');
+require('../../utils/index.js');
+var Fragment = require('../../utils/views/Fragment/Fragment.js');
 var useChildrenHandler = require('../../hooks/useChildrenHandler/useChildrenHandler.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -26,12 +27,12 @@ const nativeIterable = () => () => {
         innet__default["default"](() => genericComponent.app.next(), utils.callHandler);
         return;
     }
-    const fragment = useView.useView('fragment');
+    const fragment = new Fragment.Fragment();
     const childrenHandler = useChildrenHandler.useChildrenHandler(fragment);
     const { activeWatcher } = watchState.scope;
     let watcher;
     let deleted = false;
-    innet__default["default"](fragment, handler);
+    innet__default["default"](fragment, handler, 2);
     watchState.onDestroy(() => {
         deleted = true;
     });

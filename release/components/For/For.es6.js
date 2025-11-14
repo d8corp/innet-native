@@ -1,16 +1,15 @@
 import { EMPTY } from '@innet/jsx';
 import { lcs } from '@innet/utils';
 import { watchValueToValueWatcher } from '@watch-state/utils';
-import innet, { useHandler } from 'innet';
+import innet, { useNewHandler, useHandler, extendHandler } from 'innet';
 import { onDestroy, Watch, State, unwatch, createEvent } from 'watch-state';
 import { FOR_WATCHER_KEY, FOR_VALUE, FOR_INDEX } from '../../constants.es6.js';
 import '../../utils/index.es6.js';
-import { getContainer } from '../../utils/getContainer/getContainer.es6.js';
+import { Fragment } from '../../utils/views/Fragment/Fragment.es6.js';
+import { setParent } from '../../utils/setParent/setParent.es6.js';
 import { getParent } from '../../utils/getParent/getParent.es6.js';
 import { after } from '../../utils/after/after.es6.js';
 import { before } from '../../utils/before/before.es6.js';
-import { Fragment } from '../../utils/Fragment/Fragment.es6.js';
-import { setParent } from '../../utils/setParent/setParent.es6.js';
 
 function getForKey(data, key) {
     if (typeof key === 'string') {
@@ -27,8 +26,10 @@ function For({ key, of: ofPropRaw, children, }) {
     const ofProp = watchValueToValueWatcher(ofPropRaw);
     if (typeof ofProp !== 'function')
         return Array.from(ofProp).map((item, index) => children(item, index, getForKey(item, key)));
-    const handler = useHandler();
-    const [childHandler, forFragment] = getContainer(handler);
+    const childHandler = useNewHandler();
+    const forFragment = new Fragment();
+    setParent(childHandler, forFragment);
+    innet(forFragment, useHandler(), 2);
     let keysList = [];
     const handlersMap = new Map();
     onDestroy(() => {
@@ -43,7 +44,10 @@ function For({ key, of: ofPropRaw, children, }) {
                 if (handlersMap.has(valueKey))
                     continue;
                 keysList.push(valueKey);
-                const [deepHandler] = getContainer(childHandler, true);
+                const fragment = new Fragment();
+                const deepHandler = extendHandler(childHandler);
+                setParent(deepHandler, fragment);
+                forFragment.addChild(fragment);
                 deepHandler[FOR_VALUE] = new State(value);
                 deepHandler[FOR_INDEX] = new State(index++);
                 handlersMap.set(valueKey, deepHandler);

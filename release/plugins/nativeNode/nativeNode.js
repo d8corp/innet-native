@@ -2,27 +2,23 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var utils = require('@innet/utils');
 var core = require('@nativescript/core');
 var innet = require('innet');
 var constants = require('../../constants.js');
 require('../../hooks/index.js');
 require('../../utils/index.js');
 var useParent = require('../../hooks/useParent/useParent.js');
-var Page = require('../../utils/Page/Page.js');
+var InPage = require('../../utils/views/InPage/InPage.js');
 
 function nativeNode() {
     return () => {
         const parent = useParent.useParent();
         const app = innet.useApp();
-        if (parent instanceof utils.Ref) {
-            if (app instanceof core.View) {
-                parent.value = app;
-                return;
-            }
-            throw Error('Unexpected element used as a root view');
+        if (typeof parent === 'function') {
+            parent(app);
+            return;
         }
-        if (app instanceof Page.Page) {
+        if (app instanceof InPage.InPage) {
             const handler = innet.useHandler();
             const frame = handler[constants.PARENT_FRAME];
             if (!frame) {
@@ -46,7 +42,7 @@ function nativeNode() {
             throw Error(`You can place <string> only in text based elements, current parent: ${parent.typeName}`);
         }
         if (app instanceof core.ActionBar) {
-            if (parent instanceof Page.Page) {
+            if (parent instanceof InPage.InPage) {
                 parent.actionBar = app;
                 return;
             }
@@ -104,10 +100,7 @@ function nativeNode() {
             }
             throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
         }
-        if (app instanceof core.ViewBase) {
-            throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
-        }
-        throw Error(`Unknown element in ${parent.typeName}`);
+        throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
     };
 }
 

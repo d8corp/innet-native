@@ -5,7 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var innet = require('innet');
 var watchState = require('watch-state');
 require('../../hooks/index.js');
-var useView = require('../../hooks/useView/useView.js');
+require('../../utils/index.js');
+var Fragment = require('../../utils/views/Fragment/Fragment.js');
 var useChildrenHandler = require('../../hooks/useChildrenHandler/useChildrenHandler.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -16,9 +17,9 @@ function nativeAsync() {
     return () => {
         const handler = innet.useHandler();
         const app = innet.useApp();
-        const fragment = useView.useView('fragment');
+        const fragment = new Fragment.Fragment();
         const childHandler = useChildrenHandler.useChildrenHandler(fragment);
-        innet__default["default"](fragment, handler);
+        innet__default["default"](fragment, handler, 2);
         let removed = false;
         watchState.onDestroy(() => {
             removed = true;

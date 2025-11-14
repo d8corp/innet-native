@@ -1,9 +1,10 @@
 import './getParent/index.es6.js';
-import './getContainer/index.es6.js';
 import './setParent/index.es6.js';
-import './Fragment/index.es6.js';
+import './views/index.es6.js';
 import './after/index.es6.js';
 import './before/index.es6.js';
-import './Page/index.es6.js';
 import './isAnimateParam/index.es6.js';
 import './isAnimateProp/index.es6.js';
+import './setViewEndingAnimate/index.es6.js';
+import './createView/index.es6.js';
+import './onMount/index.es6.js';

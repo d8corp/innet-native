@@ -4,7 +4,8 @@ import { callHandler } from '@innet/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
 import { scope, onDestroy, Watch } from 'watch-state';
 import '../../hooks/index.es6.js';
-import { useView } from '../../hooks/useView/useView.es6.js';
+import '../../utils/index.es6.js';
+import { Fragment } from '../../utils/views/Fragment/Fragment.es6.js';
 import { useChildrenHandler } from '../../hooks/useChildrenHandler/useChildrenHandler.es6.js';
 
 const nativeIterable = () => () => {
@@ -18,12 +19,12 @@ const nativeIterable = () => () => {
         innet(() => genericComponent.app.next(), callHandler);
         return;
     }
-    const fragment = useView('fragment');
+    const fragment = new Fragment();
     const childrenHandler = useChildrenHandler(fragment);
     const { activeWatcher } = scope;
     let watcher;
     let deleted = false;
-    innet(fragment, handler);
+    innet(fragment, handler, 2);
     onDestroy(() => {
         deleted = true;
     });

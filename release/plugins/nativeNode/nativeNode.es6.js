@@ -1,24 +1,20 @@
-import { Ref } from '@innet/utils';
-import { View, Span, FormattedString, TextBase, ActionBar, ActionItem, SegmentedBarItem, SegmentedBar, TabViewItem, TabView, LayoutBase, ContentView, ViewBase } from '@nativescript/core';
+import { Span, FormattedString, TextBase, ActionBar, ActionItem, SegmentedBarItem, SegmentedBar, TabViewItem, TabView, View, LayoutBase, ContentView } from '@nativescript/core';
 import { useApp, useHandler } from 'innet';
 import { PARENT_FRAME } from '../../constants.es6.js';
 import '../../hooks/index.es6.js';
 import '../../utils/index.es6.js';
 import { useParent } from '../../hooks/useParent/useParent.es6.js';
-import { Page } from '../../utils/Page/Page.es6.js';
+import { InPage } from '../../utils/views/InPage/InPage.es6.js';
 
 function nativeNode() {
     return () => {
         const parent = useParent();
         const app = useApp();
-        if (parent instanceof Ref) {
-            if (app instanceof View) {
-                parent.value = app;
-                return;
-            }
-            throw Error('Unexpected element used as a root view');
+        if (typeof parent === 'function') {
+            parent(app);
+            return;
         }
-        if (app instanceof Page) {
+        if (app instanceof InPage) {
             const handler = useHandler();
             const frame = handler[PARENT_FRAME];
             if (!frame) {
@@ -42,7 +38,7 @@ function nativeNode() {
             throw Error(`You can place <string> only in text based elements, current parent: ${parent.typeName}`);
         }
         if (app instanceof ActionBar) {
-            if (parent instanceof Page) {
+            if (parent instanceof InPage) {
                 parent.actionBar = app;
                 return;
             }
@@ -100,10 +96,7 @@ function nativeNode() {
             }
             throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
         }
-        if (app instanceof ViewBase) {
-            throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
-        }
-        throw Error(`Unknown element in ${parent.typeName}`);
+        throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
     };
 }
 

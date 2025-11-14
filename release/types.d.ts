@@ -2,16 +2,16 @@ import { type Ref } from '@innet/utils';
 import { type AbsoluteLayout, type ActionBar, type ActionItem, type ActivityIndicator, type AnimationDefinition, type Button, type Color, type ContentView, type CoreTypes, type CreateViewEventData, type DatePicker, type DockLayout, type EventData, type FlexboxLayout, type FormattedString, type Frame, type GridLayout, type HtmlView, type Image, type ItemEventData, type ItemsSource, type Label, type ListPicker, type ListView, type NavigationButton, type NavigationEntry, type Observable as NativeObservable, type Placeholder, type Progress, type PropertyChangeData, type RootLayout, type ScrollEventData, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem, type SelectedIndexChangedEventData, type Slider, type Span, type StackLayout, type Style as NativeStyle, type Switch, type TabView, type TabViewItem, type TextBase, type TextField, type TextView, type TimePicker, type View, type ViewBase, type WebView, type WrapLayout } from '@nativescript/core';
 import { type WatchValue } from '@watch-state/utils';
 import { type ANIMATE_PARAMS, type ANIMATE_PROPS } from './constants';
-import { type Fragment, type Page } from './utils';
+import { type JSX_ELEMENTS } from './elements';
+import { type Fragment, type InPage } from './utils';
 export type Style = Omit<NativeStyle, keyof NativeObservable | 'view' | 'viewRef' | 'fontInternal' | 'toString' | 'PropertyBag' | 'setScopedCssVariable' | 'setUnscopedCssVariable' | 'removeScopedCssVariable' | 'removeUnscopedCssVariable' | 'getCssVariable' | 'resetScopedCssVariables' | 'resetUnscopedCssVariables'>;
 export type ObservableStyle = {
     [K in keyof Style]?: WatchValue<Style[K]>;
 };
 export type NsPropertiesOnly<T> = {
-    [K in keyof T]: T[K] extends Color | NavigationEntry ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
+    [K in keyof T]: T[K] extends Color | NavigationEntry | View ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
 }[keyof T];
-export type NsColor<T> = T extends Color ? T | string : T;
-export type NsSize<T> = T extends CoreTypes.PercentLengthType ? T | string : T;
+export type NSProp<T> = T extends Color | CoreTypes.PercentLengthType ? T | string : T extends View ? T | JSX.Element : T;
 export type PrivateViewBaseProps = `_${string}` | 'domNode' | 'nativeViewProtected';
 export type AnimatePropsParamsKey = typeof ANIMATE_PARAMS[number];
 export type AnimatePropsKey = typeof ANIMATE_PROPS[number];
@@ -20,14 +20,14 @@ export type AnimateParams = {
     [K in AnimateParamsKey]?: AnimationDefinition[K];
 };
 export type AnimateProp = Partial<Record<AnimatePropsParamsKey, WatchValue<AnimateParams | number>>>;
-export type StartingStyle = {
+export type AnimateProps = {
     [K in AnimatePropsKey]?: WatchValue<K extends keyof View ? View[K] : number>;
 };
 export type ViewBaseProps<T extends ViewBase> = {
     ref?: Ref<T>;
     style?: ObservableStyle;
 } & {
-    [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NsSize<NsColor<T[K]>>>;
+    [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NSProp<T[K]>>;
 };
 export type ViewProps<T extends View> = ViewBaseProps<T> & {
     onLoaded?: (event: EventData) => void;
@@ -37,7 +37,8 @@ export type ViewProps<T extends View> = ViewBaseProps<T> & {
     onShownModally?: (event: EventData) => void;
     scale?: WatchValue<number>;
     animate?: WatchValue<AnimateProp | number | boolean>;
-    startingStyle?: StartingStyle;
+    startingStyle?: AnimateProps;
+    endingStyle?: AnimateProps;
 };
 export type TextBaseProps<T extends TextBase> = ViewProps<T> & {
     children?: JSX.Element;
@@ -49,7 +50,6 @@ export type ChildrenViewProps<T extends View> = ViewProps<T> & {
     children?: JSX.Element;
 };
 export type SpanProps = ViewBaseProps<Span> & {
-    children?: WatchValue<string | number>;
     onLinkTap?: (event: EventData) => void;
 };
 export type ButtonProps = TextBaseProps<Button> & {
@@ -126,7 +126,7 @@ export type ActivityIndicatorProps = ViewProps<ActivityIndicator>;
 export type DatePickerProps = ViewProps<DatePicker>;
 export type HtmlViewProps = ViewProps<HtmlView>;
 export type FlexboxLayoutProps = ChildrenViewProps<FlexboxLayout>;
-export type PageProps = ChildrenViewProps<Page>;
+export type PageProps = ChildrenViewProps<InPage>;
 export type ActionBarProps = ChildrenViewProps<ActionBar>;
 export type GridLayoutProps = ChildrenViewProps<GridLayout>;
 export type StackLayoutProps = ChildrenViewProps<StackLayout>;
@@ -140,4 +140,10 @@ export type WebViewProps = ViewProps<WebView> & {
     onLoadStarted?: (event: EventData) => void;
     onLoadFinished?: (event: EventData) => void;
 };
-export type Parent = ViewBase | Ref<ViewBase>;
+export type ViewSetter<T extends ViewBase = ViewBase> = (view: T) => void;
+export type Parent<T extends ViewBase = ViewBase> = T | ViewSetter<T>;
+export type ViewProp<T extends ViewTagName> = {
+    [K in keyof InstanceType<typeof JSX_ELEMENTS[T]>]: InstanceType<typeof JSX_ELEMENTS[T]>[K] extends View ? K : never;
+}[keyof InstanceType<typeof JSX_ELEMENTS[T]>];
+export type ViewTagName = keyof typeof JSX_ELEMENTS;
+export type TagNameView = typeof JSX_ELEMENTS;

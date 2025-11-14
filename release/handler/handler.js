@@ -61,18 +61,16 @@ const handlerInner = innet.createHandler([
 const handler = innet.createHandler([
     () => () => {
         const app = innet.useApp();
-        core.Application.run({
-            create: () => {
-                const root = new utils.Ref();
-                const handler = Object.create(handlerInner);
-                setParent.setParent(handler, root);
-                innet__default["default"](app, handler);
-                if (!root.value) {
-                    throw Error('No View Provided');
-                }
-                return root.value;
-            },
+        const handler = Object.create(handlerInner);
+        setParent.setParent(handler, (view) => {
+            if (!(view instanceof core.View)) {
+                throw Error(`Unknown view ${String(view)} used as root`);
+            }
+            innet__default["default"](() => {
+                core.Application.run({ create: () => view });
+            }, utils.callHandler, 3);
         });
+        innet__default["default"](app, handler);
     },
 ]);
 

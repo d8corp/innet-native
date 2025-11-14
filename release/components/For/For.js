@@ -9,12 +9,11 @@ var innet = require('innet');
 var watchState = require('watch-state');
 var constants = require('../../constants.js');
 require('../../utils/index.js');
-var getContainer = require('../../utils/getContainer/getContainer.js');
+var Fragment = require('../../utils/views/Fragment/Fragment.js');
+var setParent = require('../../utils/setParent/setParent.js');
 var getParent = require('../../utils/getParent/getParent.js');
 var after = require('../../utils/after/after.js');
 var before = require('../../utils/before/before.js');
-var Fragment = require('../../utils/Fragment/Fragment.js');
-var setParent = require('../../utils/setParent/setParent.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -35,8 +34,10 @@ function For({ key, of: ofPropRaw, children, }) {
     const ofProp = utils.watchValueToValueWatcher(ofPropRaw);
     if (typeof ofProp !== 'function')
         return Array.from(ofProp).map((item, index) => children(item, index, getForKey(item, key)));
-    const handler = innet.useHandler();
-    const [childHandler, forFragment] = getContainer.getContainer(handler);
+    const childHandler = innet.useNewHandler();
+    const forFragment = new Fragment.Fragment();
+    setParent.setParent(childHandler, forFragment);
+    innet__default["default"](forFragment, innet.useHandler(), 2);
     let keysList = [];
     const handlersMap = new Map();
     watchState.onDestroy(() => {
@@ -51,7 +52,10 @@ function For({ key, of: ofPropRaw, children, }) {
                 if (handlersMap.has(valueKey))
                     continue;
                 keysList.push(valueKey);
-                const [deepHandler] = getContainer.getContainer(childHandler, true);
+                const fragment = new Fragment.Fragment();
+                const deepHandler = innet.extendHandler(childHandler);
+                setParent.setParent(deepHandler, fragment);
+                forFragment.addChild(fragment);
                 deepHandler[constants.FOR_VALUE] = new watchState.State(value);
                 deepHandler[constants.FOR_INDEX] = new watchState.State(index++);
                 handlersMap.set(valueKey, deepHandler);
