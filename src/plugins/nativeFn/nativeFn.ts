@@ -11,7 +11,7 @@ export function nativeFn (): HandlerPlugin {
     const fragment = new Fragment()
     const childrenHandler = useChildrenHandler(fragment)
 
-    innet(fragment, useHandler())
+    innet(fragment, useHandler(), 2)
 
     new Watch(update => {
       if (update) {

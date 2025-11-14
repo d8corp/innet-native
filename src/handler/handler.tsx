@@ -6,6 +6,7 @@ import {
 import {
   array,
   arraySync,
+  callHandler,
   fn,
   nullish,
   number,
@@ -120,7 +121,9 @@ export const handler = createHandler([
         throw Error(`Unknown view ${String(view)} used as root`)
       }
 
-      Application.run({ create: () => view })
+      innet(() => {
+        Application.run({ create: () => view })
+      }, callHandler, 3)
     })
 
     innet(app, handler)

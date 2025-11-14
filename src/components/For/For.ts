@@ -2,11 +2,11 @@ import { EMPTY } from '@innet/jsx'
 import { lcs } from '@innet/utils'
 import { type View } from '@nativescript/core'
 import { type WatchValue, watchValueToValueWatcher } from '@watch-state/utils'
-import innet, { type Handler, useHandler } from 'innet'
+import innet, { extendHandler, type Handler, useHandler, useNewHandler } from 'innet'
 import { createEvent, onDestroy, State, unwatch, Watch } from 'watch-state'
 
 import { FOR_INDEX, FOR_VALUE, FOR_WATCHER_KEY } from '../../constants'
-import { after, before, Fragment, getContainer, getParent, setParent } from '../../utils'
+import { after, before, Fragment, getParent, setParent } from '../../utils'
 
 export type ForKeyFn<T, V> = (data: T) => V
 export type ForKeyStr<T, V> = { [P in keyof T]: T[P] extends V | undefined ? P : never }[keyof T]
@@ -49,8 +49,12 @@ export function For <T extends WatchValue<Iterable<any>>, V extends ForKey<GetTy
 
   if (typeof ofProp !== 'function') return Array.from(ofProp).map<JSX.Element>((item, index) => children(item, index as any, getForKey(item, key)))
 
-  const handler = useHandler()
-  const [childHandler, forFragment] = getContainer(handler)
+  const childHandler = useNewHandler()
+  const forFragment = new Fragment()
+  setParent(childHandler, forFragment)
+
+  innet(forFragment, useHandler(), 2)
+
   let keysList: any[] = []
   const handlersMap = new Map<any, Handler>()
 
@@ -71,7 +75,10 @@ export function For <T extends WatchValue<Iterable<any>>, V extends ForKey<GetTy
 
         keysList.push(valueKey)
 
-        const [deepHandler] = getContainer(childHandler, true)
+        const fragment = new Fragment()
+        const deepHandler = extendHandler(childHandler)
+        setParent(deepHandler, fragment)
+        forFragment.addChild(fragment)
         deepHandler[FOR_VALUE] = new State(value)
         deepHandler[FOR_INDEX] = new State(index++)
         handlersMap.set(valueKey, deepHandler)
