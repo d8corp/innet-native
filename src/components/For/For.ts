@@ -53,7 +53,7 @@ export function For <T extends WatchValue<Iterable<any>>, V extends ForKey<GetTy
   const forFragment = new Fragment()
   setParent(childHandler, forFragment)
 
-  innet(forFragment, useHandler(), 1, true)
+  innet(forFragment, useHandler(), 0, true)
 
   let keysList: any[] = []
   const handlersMap = new Map<any, Handler>()

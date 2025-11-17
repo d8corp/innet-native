@@ -23,7 +23,7 @@ function Suspense({ fallback, children }) {
     new watchState.Watch(() => {
         fragment.shown = !showFallback.value;
     });
-    innet__default["default"](fragment, innet.useHandler(), 1, true);
+    innet__default["default"](fragment, innet.useHandler(), 0, true);
     innet__default["default"](children, childrenHandler);
     return () => showFallback.value ? fallback : null;
 }

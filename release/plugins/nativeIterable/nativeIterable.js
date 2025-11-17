@@ -4,8 +4,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var tslib = require('tslib');
 var jsx = require('@innet/jsx');
-var utils = require('@innet/utils');
 var innet = require('innet');
+var queueNanoTask = require('queue-nano-task');
 var watchState = require('watch-state');
 require('../../hooks/index.js');
 require('../../utils/index.js');
@@ -24,7 +24,7 @@ const nativeIterable = () => () => {
     const { app: apps, data } = genericComponent;
     if (!(data instanceof Promise)) {
         innet__default["default"](data.value, handler);
-        innet__default["default"](() => genericComponent.app.next(), utils.callHandler);
+        queueNanoTask.queueNanotask(() => genericComponent.app.next());
         return;
     }
     const fragment = new Fragment.Fragment();
@@ -32,7 +32,7 @@ const nativeIterable = () => () => {
     const { activeWatcher } = watchState.scope;
     let watcher;
     let deleted = false;
-    innet__default["default"](fragment, handler, 1, true);
+    innet__default["default"](fragment, handler, 0, true);
     watchState.onDestroy(() => {
         deleted = true;
     });

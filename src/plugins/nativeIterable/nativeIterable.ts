@@ -1,6 +1,6 @@
 import { GenericComponent } from '@innet/jsx'
-import { callHandler } from '@innet/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 import { onDestroy, scope, Watch } from 'watch-state'
 
 import { useChildrenHandler } from '../../hooks'
@@ -16,7 +16,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
 
   if (!(data instanceof Promise)) {
     innet(data.value, handler)
-    innet(() => genericComponent.app.next(), callHandler)
+    queueNanotask(() => genericComponent.app.next())
     return
   }
 
@@ -27,7 +27,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
   let watcher: Watch
   let deleted = false
 
-  innet(fragment, handler, 1, true)
+  innet(fragment, handler, 0, true)
 
   onDestroy(() => {
     deleted = true

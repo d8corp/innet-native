@@ -11,7 +11,7 @@ export function nativeAsync (): HandlerPlugin {
     const fragment = new Fragment()
     const childHandler = useChildrenHandler(fragment)
 
-    innet(fragment, handler, 1, true)
+    innet(fragment, handler, 0, true)
 
     let removed = false
 

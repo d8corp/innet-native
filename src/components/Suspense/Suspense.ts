@@ -22,7 +22,7 @@ export function Suspense ({ fallback, children }: SuspenseProps) {
     fragment.shown = !showFallback.value
   })
 
-  innet(fragment, useHandler(), 1, true)
+  innet(fragment, useHandler(), 0, true)
   innet(children, childrenHandler)
 
   return () => showFallback.value ? fallback : null

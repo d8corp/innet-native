@@ -1,8 +1,7 @@
-import { callHandler } from '@innet/utils';
-import innet from 'innet';
+import { queueNanotask } from 'queue-nano-task';
 
 function onMount(callback) {
-    innet(callback, callHandler, 3);
+    queueNanotask(callback, 1);
 }
 
 export { onMount };

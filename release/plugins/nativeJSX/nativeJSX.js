@@ -24,7 +24,7 @@ function nativeJSX() {
         const target = typeof Type === 'string' ? createView.createView(Type) : new Type();
         useNativeProps.useNativeProps(target, typeof Type === 'string' ? Type : undefined);
         useNativeChildren.useNativeChildren(target);
-        innet__default["default"](target, handler, 1, true);
+        innet__default["default"](target, handler, 0, true);
     };
 }
 

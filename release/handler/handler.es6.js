@@ -1,7 +1,8 @@
 import { jsxComponent, jsxPlugins } from '@innet/jsx';
-import { arraySync, nullish, promise, fn, string, number, array, object, callHandler } from '@innet/utils';
+import { arraySync, nullish, promise, fn, string, number, array, object } from '@innet/utils';
 import { View, Application } from '@nativescript/core';
 import innet, { createHandler, useApp } from 'innet';
+import { queueNanotask } from 'queue-nano-task';
 import '../plugins/index.es6.js';
 import '../utils/index.es6.js';
 import { state } from '../plugins/state/state.es6.js';
@@ -60,9 +61,9 @@ const handler = createHandler([
             if (!(view instanceof View)) {
                 throw Error(`Unknown view ${String(view)} used as root`);
             }
-            innet(() => {
+            queueNanotask(() => {
                 Application.run({ create: () => view });
-            }, callHandler, 3);
+            }, 1);
         });
         innet(app, handler);
     },

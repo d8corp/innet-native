@@ -6,7 +6,6 @@ import {
 import {
   array,
   arraySync,
-  callHandler,
   fn,
   nullish,
   number,
@@ -16,6 +15,7 @@ import {
 } from '@innet/utils'
 import { Application, View } from '@nativescript/core'
 import innet, { createHandler, useApp } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 import { type Observable } from 'watch-state'
 
 import {
@@ -126,9 +126,9 @@ export const handler = createHandler([
         throw Error(`Unknown view ${String(view)} used as root`)
       }
 
-      innet(() => {
+      queueNanotask(() => {
         Application.run({ create: () => view })
-      }, callHandler, 3)
+      }, 1)
     })
 
     innet(app, handler)

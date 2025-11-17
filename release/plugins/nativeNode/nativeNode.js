@@ -4,6 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var core = require('@nativescript/core');
 var innet = require('innet');
+var queueNanoTask = require('queue-nano-task');
 var constants = require('../../constants.js');
 require('../../hooks/index.js');
 require('../../utils/index.js');
@@ -14,93 +15,95 @@ function nativeNode() {
     return () => {
         const parent = useParent.useParent();
         const app = innet.useApp();
-        if (typeof parent === 'function') {
-            parent(app);
-            return;
-        }
-        if (app instanceof InPage.InPage) {
-            const handler = innet.useHandler();
-            const frame = handler[constants.PARENT_FRAME];
-            if (!frame) {
-                throw Error('You can place <page> only in a <frame>');
-            }
-            frame.navigate(Object.assign(Object.assign({}, app.navigation), { create: () => app }));
-            return;
-        }
-        if (app instanceof core.Span) {
-            if (parent instanceof core.FormattedString) {
-                parent.spans.push(app);
+        queueNanoTask.queueNanotask(() => {
+            if (typeof parent === 'function') {
+                parent(app);
                 return;
             }
-            throw Error(`You can place <span> only in <string>, current parent: ${parent.typeName}`);
-        }
-        if (app instanceof core.FormattedString) {
-            if (parent instanceof core.TextBase) {
-                parent.formattedText = app;
-                return;
-            }
-            throw Error(`You can place <string> only in text based elements, current parent: ${parent.typeName}`);
-        }
-        if (app instanceof core.ActionBar) {
-            if (parent instanceof InPage.InPage) {
-                parent.actionBar = app;
-                return;
-            }
-            throw Error(`You can place <action-bar> only in <page>, current parent: ${parent.typeName}`);
-        }
-        if (app instanceof core.ActionItem) {
-            if (parent instanceof core.ActionBar) {
-                parent.actionItems.addItem(app);
-                return;
-            }
-            throw Error(`You can place <action-item> only in <action-bar>, current parent: ${parent.typeName}`);
-        }
-        if (app instanceof core.SegmentedBarItem) {
-            if (parent instanceof core.SegmentedBar) {
-                if (!parent.items) {
-                    parent.items = [];
+            if (app instanceof InPage.InPage) {
+                const handler = innet.useHandler();
+                const frame = handler[constants.PARENT_FRAME];
+                if (!frame) {
+                    throw Error('You can place <page> only in a <frame>');
                 }
-                parent.items.push(app);
+                frame.navigate(Object.assign(Object.assign({}, app.navigation), { create: () => app }));
                 return;
             }
-            throw Error(`You can place <segmented-bar-item> only in <segmented-bar>, current parent: ${parent.typeName}`);
-        }
-        if (app instanceof core.TabViewItem) {
-            if (parent instanceof core.TabView) {
-                if (parent.items) {
-                    parent.items = [...parent.items, app];
+            if (app instanceof core.Span) {
+                if (parent instanceof core.FormattedString) {
+                    parent.spans.unshift(app);
+                    return;
                 }
-                else {
-                    parent.items = [app];
+                throw Error(`You can place <span> only in <string>, current parent: ${parent.typeName}`);
+            }
+            if (app instanceof core.FormattedString) {
+                if (parent instanceof core.TextBase) {
+                    parent.formattedText = app;
+                    return;
                 }
-                return;
+                throw Error(`You can place <string> only in text based elements, current parent: ${parent.typeName}`);
             }
-            throw Error(`You can place <tab-view-item> only in <tab-view>, current parent: ${parent.typeName}`);
-        }
-        if (app instanceof core.View) {
-            if (parent instanceof core.ActionBar) {
-                parent.titleView = app;
-                return;
+            if (app instanceof core.ActionBar) {
+                if (parent instanceof InPage.InPage) {
+                    parent.actionBar = app;
+                    return;
+                }
+                throw Error(`You can place <action-bar> only in <page>, current parent: ${parent.typeName}`);
             }
-            if (parent instanceof core.LayoutBase) {
-                parent.addChild(app);
-                return;
+            if (app instanceof core.ActionItem) {
+                if (parent instanceof core.ActionBar) {
+                    parent.actionItems.addItem(app);
+                    return;
+                }
+                throw Error(`You can place <action-item> only in <action-bar>, current parent: ${parent.typeName}`);
             }
-            if (parent instanceof core.ContentView) {
-                parent.content = app;
-                return;
+            if (app instanceof core.SegmentedBarItem) {
+                if (parent instanceof core.SegmentedBar) {
+                    if (!parent.items) {
+                        parent.items = [];
+                    }
+                    parent.items.unshift(app);
+                    return;
+                }
+                throw Error(`You can place <segmented-bar-item> only in <segmented-bar>, current parent: ${parent.typeName}`);
             }
-            if (parent instanceof core.ActionItem) {
-                parent.actionView = app;
-                return;
+            if (app instanceof core.TabViewItem) {
+                if (parent instanceof core.TabView) {
+                    if (parent.items) {
+                        parent.items = [app, ...parent.items];
+                    }
+                    else {
+                        parent.items = [app];
+                    }
+                    return;
+                }
+                throw Error(`You can place <tab-view-item> only in <tab-view>, current parent: ${parent.typeName}`);
             }
-            if (parent instanceof core.TabViewItem) {
-                parent.view = app;
-                return;
+            if (app instanceof core.View) {
+                if (parent instanceof core.ActionBar) {
+                    parent.titleView = app;
+                    return;
+                }
+                if (parent instanceof core.LayoutBase) {
+                    parent.insertChild(app, 0);
+                    return;
+                }
+                if (parent instanceof core.ContentView) {
+                    parent.content = app;
+                    return;
+                }
+                if (parent instanceof core.ActionItem) {
+                    parent.actionView = app;
+                    return;
+                }
+                if (parent instanceof core.TabViewItem) {
+                    parent.view = app;
+                    return;
+                }
+                throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
             }
             throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
-        }
-        throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
+        }, 1, true);
     };
 }
 

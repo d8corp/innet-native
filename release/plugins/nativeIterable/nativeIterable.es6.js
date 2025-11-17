@@ -1,7 +1,7 @@
 import { __awaiter, __asyncValues } from 'tslib';
 import { GenericComponent } from '@innet/jsx';
-import { callHandler } from '@innet/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
+import { queueNanotask } from 'queue-nano-task';
 import { scope, onDestroy, Watch } from 'watch-state';
 import '../../hooks/index.es6.js';
 import '../../utils/index.es6.js';
@@ -16,7 +16,7 @@ const nativeIterable = () => () => {
     const { app: apps, data } = genericComponent;
     if (!(data instanceof Promise)) {
         innet(data.value, handler);
-        innet(() => genericComponent.app.next(), callHandler);
+        queueNanotask(() => genericComponent.app.next());
         return;
     }
     const fragment = new Fragment();
@@ -24,7 +24,7 @@ const nativeIterable = () => () => {
     const { activeWatcher } = scope;
     let watcher;
     let deleted = false;
-    innet(fragment, handler, 1, true);
+    innet(fragment, handler, 0, true);
     onDestroy(() => {
         deleted = true;
     });

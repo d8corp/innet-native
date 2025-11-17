@@ -6,6 +6,7 @@ var jsx = require('@innet/jsx');
 var utils = require('@innet/utils');
 var core = require('@nativescript/core');
 var innet = require('innet');
+var queueNanoTask = require('queue-nano-task');
 require('../plugins/index.js');
 require('../utils/index.js');
 var state = require('../plugins/state/state.js');
@@ -68,9 +69,9 @@ const handler = innet.createHandler([
             if (!(view instanceof core.View)) {
                 throw Error(`Unknown view ${String(view)} used as root`);
             }
-            innet__default["default"](() => {
+            queueNanoTask.queueNanotask(() => {
                 core.Application.run({ create: () => view });
-            }, utils.callHandler, 3);
+            }, 1);
         });
         innet__default["default"](app, handler);
     },
