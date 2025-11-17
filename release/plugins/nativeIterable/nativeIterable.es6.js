@@ -24,7 +24,7 @@ const nativeIterable = () => () => {
     const { activeWatcher } = scope;
     let watcher;
     let deleted = false;
-    innet(fragment, handler, 2);
+    innet(fragment, handler, 1, true);
     onDestroy(() => {
         deleted = true;
     });

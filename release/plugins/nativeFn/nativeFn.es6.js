@@ -10,7 +10,7 @@ function nativeFn() {
         const fn = useApp();
         const fragment = new Fragment();
         const childrenHandler = useChildrenHandler(fragment);
-        innet(fragment, useHandler(), 2);
+        innet(fragment, useHandler(), 1, true);
         new Watch(update => {
             if (update) {
                 fragment.removeChildren();

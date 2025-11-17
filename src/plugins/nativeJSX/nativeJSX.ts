@@ -19,6 +19,6 @@ export function nativeJSX (): HandlerPlugin {
     useNativeProps(target, typeof Type === 'string' ? Type as ViewTagName : undefined)
     useNativeChildren(target)
 
-    innet(target, handler, 2)
+    innet(target, handler, 1, true)
   }
 }

@@ -19,7 +19,7 @@ function nativeAsync() {
         const app = innet.useApp();
         const fragment = new Fragment.Fragment();
         const childHandler = useChildrenHandler.useChildrenHandler(fragment);
-        innet__default["default"](fragment, handler, 2);
+        innet__default["default"](fragment, handler, 1, true);
         let removed = false;
         watchState.onDestroy(() => {
             removed = true;

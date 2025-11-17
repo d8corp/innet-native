@@ -18,7 +18,7 @@ function nativeFn() {
         const fn = innet.useApp();
         const fragment = new Fragment.Fragment();
         const childrenHandler = useChildrenHandler.useChildrenHandler(fragment);
-        innet__default["default"](fragment, innet.useHandler(), 2);
+        innet__default["default"](fragment, innet.useHandler(), 1, true);
         new watchState.Watch(update => {
             if (update) {
                 fragment.removeChildren();

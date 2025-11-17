@@ -27,7 +27,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
   let watcher: Watch
   let deleted = false
 
-  innet(fragment, handler, 2)
+  innet(fragment, handler, 1, true)
 
   onDestroy(() => {
     deleted = true

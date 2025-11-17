@@ -37,7 +37,7 @@ function For({ key, of: ofPropRaw, children, }) {
     const childHandler = innet.useNewHandler();
     const forFragment = new Fragment.Fragment();
     setParent.setParent(childHandler, forFragment);
-    innet__default["default"](forFragment, innet.useHandler(), 2);
+    innet__default["default"](forFragment, innet.useHandler(), 1, true);
     let keysList = [];
     const handlersMap = new Map();
     watchState.onDestroy(() => {

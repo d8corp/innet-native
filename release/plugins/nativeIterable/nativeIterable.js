@@ -32,7 +32,7 @@ const nativeIterable = () => () => {
     const { activeWatcher } = watchState.scope;
     let watcher;
     let deleted = false;
-    innet__default["default"](fragment, handler, 2);
+    innet__default["default"](fragment, handler, 1, true);
     watchState.onDestroy(() => {
         deleted = true;
     });

@@ -29,7 +29,7 @@ function For({ key, of: ofPropRaw, children, }) {
     const childHandler = useNewHandler();
     const forFragment = new Fragment();
     setParent(childHandler, forFragment);
-    innet(forFragment, useHandler(), 2);
+    innet(forFragment, useHandler(), 1, true);
     let keysList = [];
     const handlersMap = new Map();
     onDestroy(() => {

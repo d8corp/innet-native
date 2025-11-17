@@ -15,7 +15,7 @@ function Suspense({ fallback, children }) {
     new Watch(() => {
         fragment.shown = !showFallback.value;
     });
-    innet(fragment, useHandler(), 2);
+    innet(fragment, useHandler(), 1, true);
     innet(children, childrenHandler);
     return () => showFallback.value ? fallback : null;
 }
