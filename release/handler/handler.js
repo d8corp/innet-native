@@ -14,6 +14,7 @@ var nativeJSX = require('../plugins/nativeJSX/nativeJSX.js');
 var nativeFn = require('../plugins/nativeFn/nativeFn.js');
 var nativeText = require('../plugins/nativeText/nativeText.js');
 var nativeNode = require('../plugins/nativeNode/nativeNode.js');
+var suspense = require('../plugins/suspense/suspense.js');
 var nativeAsync = require('../plugins/nativeAsync/nativeAsync.js');
 var view = require('../plugins/view/view.js');
 var setParent = require('../utils/setParent/setParent.js');
@@ -46,6 +47,7 @@ const nodePlugins = [
     nativeNode.nativeNode,
 ];
 const promisePlugins = [
+    suspense.suspense,
     nativeAsync.nativeAsync,
 ];
 const handlerInner = innet.createHandler([

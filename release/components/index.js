@@ -4,4 +4,5 @@ require('./Portal/index.js');
 require('./Show/index.js');
 require('./Hide/index.js');
 require('./For/index.js');
+require('./Suspense/index.js');
 

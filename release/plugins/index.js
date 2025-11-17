@@ -8,4 +8,5 @@ require('./nativeIterable/index.js');
 require('./nativeNode/index.js');
 require('./view/index.js');
 require('./nativeJSX/index.js');
+require('./suspense/index.js');
 

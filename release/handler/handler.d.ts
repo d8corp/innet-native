@@ -2,7 +2,7 @@ import { type JSXElement } from '@innet/jsx';
 import { arraySync } from '@innet/utils';
 import { View } from '@nativescript/core';
 import { type Observable } from 'watch-state';
-import { nativeAsync, nativeFn, nativeNode, nativeText } from '../plugins';
+import { nativeFn, nativeNode, nativeText, suspense } from '../plugins';
 import { type AbsoluteLayoutProps, type ActionBarProps, type ActionItemProps, type ActivityIndicatorProps, type ButtonProps, type DatePickerProps, type DockLayoutProps, type FlexboxLayoutProps, type FormattedStringProps, type FragmentProps, type FrameProps, type GridLayoutProps, type HtmlViewProps, type ImageProps, type LabelProps, type ListPickerProps, type ListViewProps, type NavigationButtonProps, type PageProps, type PlaceholderProps, type ProgressProps, type RootLayoutProps, type ScrollViewProps, type SearchBarProps, type SegmentedBarItemProps, type SegmentedBarProps, type SliderProps, type SpanProps, type StackLayoutProps, type SwitchProps, type TabViewItemProps, type TabViewProps, type TextFieldProps, type TextViewProps, type TimePickerProps, type WebViewProps, type WrapLayoutProps } from '../types';
 export declare const arrayPlugins: (typeof arraySync)[];
 export declare const JSXPlugins: {};
@@ -11,7 +11,7 @@ export declare const fnPlugins: (typeof nativeFn)[];
 export declare const stringPlugins: (typeof nativeText)[];
 export declare const numberPlugins: (typeof nativeText)[];
 export declare const nodePlugins: (typeof nativeNode)[];
-export declare const promisePlugins: (typeof nativeAsync)[];
+export declare const promisePlugins: (typeof suspense)[];
 export declare const handler: import("innet").Handler;
 declare global {
     namespace JSX {

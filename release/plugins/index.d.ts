@@ -6,3 +6,4 @@ export * from './nativeIterable';
 export * from './nativeNode';
 export * from './view';
 export * from './nativeJSX';
+export * from './suspense';

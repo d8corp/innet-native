@@ -10,6 +10,7 @@ import { nativeJSX } from '../plugins/nativeJSX/nativeJSX.es6.js';
 import { nativeFn } from '../plugins/nativeFn/nativeFn.es6.js';
 import { nativeText } from '../plugins/nativeText/nativeText.es6.js';
 import { nativeNode } from '../plugins/nativeNode/nativeNode.es6.js';
+import { suspense } from '../plugins/suspense/suspense.es6.js';
 import { nativeAsync } from '../plugins/nativeAsync/nativeAsync.es6.js';
 import { view } from '../plugins/view/view.es6.js';
 import { setParent } from '../utils/setParent/setParent.es6.js';
@@ -38,6 +39,7 @@ const nodePlugins = [
     nativeNode,
 ];
 const promisePlugins = [
+    suspense,
     nativeAsync,
 ];
 const handlerInner = createHandler([

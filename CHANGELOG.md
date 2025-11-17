@@ -2,6 +2,11 @@
 
 ## v0.0
 
+### v0.0.19 [![14.11.2025](https://img.shields.io/date/1763393262)](https://github.com/d8corp/innet-dom/tree/v0.0.19)
+
+- Update dependencies
+- Add `Suspense`
+
 ### v0.0.18 [![14.11.2025](https://img.shields.io/date/1763149975)](https://github.com/d8corp/innet-dom/tree/v0.0.18)
 
 - Add `endingStyle`

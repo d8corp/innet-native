@@ -21,10 +21,12 @@ import { type Observable } from 'watch-state'
 import {
   nativeAsync,
   nativeFn,
-  nativeIterable, nativeJSX,
+  nativeIterable,
+  nativeJSX,
   nativeNode,
   nativeText,
   state,
+  suspense,
   view,
 } from '../plugins'
 import {
@@ -48,7 +50,8 @@ import {
   type NavigationButtonProps,
   type PageProps,
   type PlaceholderProps,
-  type ProgressProps, type RootLayoutProps,
+  type ProgressProps,
+  type RootLayoutProps,
   type ScrollViewProps,
   type SearchBarProps,
   type SegmentedBarItemProps,
@@ -61,7 +64,8 @@ import {
   type TabViewProps,
   type TextFieldProps,
   type TextViewProps,
-  type TimePickerProps, type WebViewProps,
+  type TimePickerProps,
+  type WebViewProps,
   type WrapLayoutProps,
 } from '../types'
 import { setParent } from '../utils'
@@ -97,6 +101,7 @@ export const nodePlugins = [
 ]
 
 export const promisePlugins = [
+  suspense,
   nativeAsync,
 ]
 

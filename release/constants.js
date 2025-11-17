@@ -16,6 +16,7 @@ const FOR_WATCHER_KEY = Symbol('FOR_WATCHER_KEY');
 const PARENT_FRAME = Symbol('PARENT_FRAME');
 const PARENT_NAVIGATE = Symbol('PARENT_NAVIGATE');
 const ENDING_ANIMATE = Symbol('ENDING_ANIMATE');
+const SUSPENSE = Symbol('SUSPENSE');
 const ANIMATE_PARAMS_PROPS = [
     'height',
     'width',
@@ -49,3 +50,4 @@ exports.PARENT = PARENT;
 exports.PARENT_FRAME = PARENT_FRAME;
 exports.PARENT_NAVIGATE = PARENT_NAVIGATE;
 exports.RENDER_PROPS = RENDER_PROPS;
+exports.SUSPENSE = SUSPENSE;
