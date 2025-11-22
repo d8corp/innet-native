@@ -144,6 +144,10 @@ declare global {
     type WatchElement = (update: boolean) => Element
     type PromiseElement = Promise<NonPromiseElement>
 
+    interface ElementAttributesProperty {
+      props: {}
+    }
+
     interface ElementChildrenAttribute {
       // eslint-disable-next-line @typescript-eslint/ban-types
       children: {}

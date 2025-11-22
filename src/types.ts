@@ -25,7 +25,6 @@ import {
   type ListPicker,
   type ListView,
   type NavigationButton,
-  type NavigationEntry,
   type Observable as NativeObservable,
   type Placeholder,
   type Progress,
@@ -65,6 +64,7 @@ import {
   type SUSPENSE,
 } from './constants'
 import { type JSX_ELEMENTS } from './elements'
+import { type GridLayoutNSProps, type SpanNSProps } from './nsProps'
 import { type Fragment, type InPage } from './utils'
 
 export type Style = Omit<
@@ -86,13 +86,8 @@ keyof NativeObservable
 
 export type ObservableStyle = { [K in keyof Style]?: WatchValue<Style[K]> }
 
-export type NsPropertiesOnly<T> = {
-  [K in keyof T]: T[K] extends Color | NavigationEntry | View ? K : T[K] extends Function | object ? K extends 'ios' | 'android' ? K : never : K;
-}[keyof T]
-
 export type NSProp<T> = T extends Color | CoreTypes.PercentLengthType ? T | string : T extends View ? T | JSX.Element : T
 
-export type PrivateViewBaseProps = `_${string}` | 'domNode' | 'nativeViewProtected'
 export type AnimatePropsParamsKey = typeof ANIMATE_PARAMS[number]
 export type AnimatePropsKey = typeof ANIMATE_PROPS[number]
 export type AnimateParamsKey = Exclude<keyof AnimationDefinition, AnimatePropsParamsKey | 'target'>
@@ -100,11 +95,22 @@ export type AnimateParams = { [K in AnimateParamsKey]?: AnimationDefinition[K] }
 export type AnimateProp = Partial<Record<AnimatePropsParamsKey, WatchValue<AnimateParams | number>>>
 export type AnimateProps = { [K in AnimatePropsKey]?: WatchValue<K extends keyof View ? View[K] : number> }
 
-export type ViewBaseProps<T extends ViewBase> = {
+export interface InViewProps<T extends ViewBase> {
   ref?: Ref<T>
   style?: ObservableStyle
-} & {
-  [K in Exclude<NsPropertiesOnly<T>, PrivateViewBaseProps>]?: K extends 'ios' | 'android' ? Partial<T[K]> : WatchValue<NSProp<T[K]>>
+  ios?: Record<string, any>
+  android?: Record<string, any>
+}
+
+export interface ChildrenProps {
+  children?: JSX.Element
+}
+
+export type GetNSProps<T extends object> = { [K in keyof T]?: WatchValue<NSProp<T[K]>> }
+
+export type ViewBaseProps<T extends ViewBase> = InViewProps<T> & {
+  onLoaded?: (event: EventData) => void
+  onUnloaded?: (event: EventData) => void
 }
 
 export type ViewProps<T extends View> = ViewBaseProps<T> & {
@@ -129,10 +135,6 @@ export type ContentProps<T extends ContentView> = ViewProps<T> & {
 
 export type ChildrenViewProps<T extends View> = ViewProps<T> & {
   children?: JSX.Element
-}
-
-export type SpanProps = ViewBaseProps<Span> & {
-  onLinkTap?: (event: EventData) => void
 }
 
 export type ButtonProps = TextBaseProps<Button> & {
@@ -218,7 +220,6 @@ export type ListPickerProps = ViewProps<ListPicker> & {
   onSelectedIndexChange?: (event: PropertyChangeData) => void
 }
 
-export type RootLayoutProps = ChildrenViewProps<RootLayout>
 export type ProgressProps = ViewProps<Progress>
 export type SegmentedBarItemProps = ViewBaseProps<SegmentedBarItem>
 export type ImageProps = ViewProps<Image>
@@ -228,7 +229,6 @@ export type HtmlViewProps = ViewProps<HtmlView>
 export type FlexboxLayoutProps = ChildrenViewProps<FlexboxLayout>
 export type PageProps = ChildrenViewProps<InPage>
 export type ActionBarProps = ChildrenViewProps<ActionBar>
-export type GridLayoutProps = ChildrenViewProps<GridLayout>
 export type StackLayoutProps = ChildrenViewProps<StackLayout>
 export type WrapLayoutProps = ChildrenViewProps<WrapLayout>
 export type DockLayoutProps = ChildrenViewProps<DockLayout>
@@ -241,6 +241,13 @@ export type WebViewProps = ViewProps<WebView> & {
   onLoadFinished?: (event: EventData) => void
 }
 
+export type SpanProps<T extends Span = Span> = InViewProps<T> & GetNSProps<SpanNSProps<T>> & {
+  onLinkTap?: (event: EventData) => void
+}
+
+export type GridLayoutProps<T extends GridLayout = GridLayout> = ChildrenProps & InViewProps<T> & GetNSProps<GridLayoutNSProps<T>>
+export type RootLayoutProps<T extends RootLayout = RootLayout> = GridLayoutProps<T>
+
 export type Parent<T extends ViewBase = ViewBase> = T | T[]
 
 export type ViewProp<T extends ViewTagName> = {
@@ -251,7 +258,7 @@ export type ViewTagName = keyof typeof JSX_ELEMENTS
 export type TagNameView = typeof JSX_ELEMENTS
 
 declare module 'innet' {
-  interface Handler {
+  export interface Handler {
     [SUSPENSE]?: State<Set<Promise<any>>>
     [PARENT_FRAME]?: Frame
     [PARENT]?: Parent
@@ -259,8 +266,20 @@ declare module 'innet' {
 }
 
 declare module '@nativescript/core' {
-  interface ViewBase {
+  export interface ViewBase {
     [CHILDREN]?: ViewBase[]
     [ENDING_ANIMATE]?: AnimationDefinition
+  }
+
+  export interface Span {
+    props?: SpanProps
+  }
+
+  export interface RootLayout {
+    props?: RootLayoutProps
+  }
+
+  export interface GridLayout {
+    props?: GridLayoutProps
   }
 }
