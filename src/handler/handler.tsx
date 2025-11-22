@@ -13,12 +13,12 @@ import {
   promise,
   string,
 } from '@innet/utils'
-import { Application, View } from '@nativescript/core'
-import innet, { createHandler, useApp } from 'innet'
-import { queueNanotask } from 'queue-nano-task'
+import { type View } from '@nativescript/core'
+import { createHandler } from 'innet'
 import { type Observable } from 'watch-state'
 
 import {
+  native,
   nativeAsync,
   nativeFn,
   nativeIterable,
@@ -68,7 +68,6 @@ import {
   type WebViewProps,
   type WrapLayoutProps,
 } from '../types'
-import { setParent } from '../utils'
 
 export const arrayPlugins = [
   arraySync,
@@ -105,7 +104,8 @@ export const promisePlugins = [
   nativeAsync,
 ]
 
-const handlerInner = createHandler([
+export const handler = createHandler([
+  native,
   nullish([]),
   promise(promisePlugins),
   view(nodePlugins),
@@ -114,25 +114,6 @@ const handlerInner = createHandler([
   number(numberPlugins),
   array(arrayPlugins),
   object(objectPlugins),
-])
-
-export const handler = createHandler([
-  () => () => {
-    const app = useApp()
-    const handler = Object.create(handlerInner)
-
-    setParent(handler, (view) => {
-      if (!(view instanceof View)) {
-        throw Error(`Unknown view ${String(view)} used as root`)
-      }
-
-      queueNanotask(() => {
-        Application.run({ create: () => view })
-      }, 1)
-    })
-
-    innet(app, handler)
-  },
 ])
 
 declare global {

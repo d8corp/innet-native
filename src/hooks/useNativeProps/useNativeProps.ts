@@ -1,13 +1,14 @@
 import { type Props, useProps } from '@innet/jsx'
 import { type AnimationDefinition, View, type ViewBase } from '@nativescript/core'
 import { use, watchValueToValueWatcher } from '@watch-state/utils'
-import innet, { useHandler } from 'innet'
+import innet, { useNewHandler } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 import SyncTimer from 'sync-timer'
 import { onDestroy, unwatch, Watch } from 'watch-state'
 
-import { RENDER_PROPS } from '../../constants'
+import { PARENT, RENDER_PROPS } from '../../constants'
 import type { AnimateProp, AnimatePropsParamsKey, ViewTagName } from '../../types'
-import { isAnimateParam, isAnimateProp, setParent, setViewEndingAnimate } from '../../utils'
+import { isAnimateParam, isAnimateProp, setViewEndingAnimate } from '../../utils'
 
 export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
   const props = useProps<Props>()
@@ -157,9 +158,12 @@ export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
     if (tagName && tagName in RENDER_PROPS && key in RENDER_PROPS[tagName as keyof typeof RENDER_PROPS]) {
       const tag = tagName as keyof typeof RENDER_PROPS
       const tagView = RENDER_PROPS[tag][key as keyof typeof RENDER_PROPS[typeof tag]]
-      const propHandler = Object.create(useHandler())
+      const propHandler = useNewHandler()
+      const children: ViewBase[] = propHandler[PARENT] = []
 
-      setParent(propHandler, (view) => {
+      const render = () => {
+        const view = children[0]
+
         if (view instanceof tagView) {
           // @ts-expect-error TODO: check types
           target[key] = view
@@ -167,19 +171,21 @@ export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
         }
 
         throw Error(`You cannot use ${String(view)} in <${tagName} ${key}={...}>`)
-      })
+      }
 
       const watchValue = watchValueToValueWatcher(value)
 
       if (typeof watchValue === 'function') {
         new Watch((update) => {
-          innet(use(watchValue, update), propHandler)
+          queueNanotask(render, 1, true)
+          innet(use(watchValue, update), propHandler, 0, true)
         })
 
         continue
       }
 
-      innet(watchValue, propHandler)
+      queueNanotask(render, 1, true)
+      innet(watchValue, propHandler, 0, true)
       continue
     }
 

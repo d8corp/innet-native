@@ -1,9 +1,9 @@
+import { EMPTY } from '@innet/jsx'
 import { type LayoutBase } from '@nativescript/core'
-import innet from 'innet'
-import { onDestroy } from 'watch-state'
+import innet, { useNewHandler } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 
-import { useChildrenHandler } from '../../hooks'
-import { Fragment } from '../../utils'
+import { setParent, updateChildren } from '../../utils'
 
 export interface PortalProps {
   parent: LayoutBase
@@ -11,11 +11,14 @@ export interface PortalProps {
 }
 
 export function Portal ({ parent, children }: PortalProps) {
-  const fragment = new Fragment()
-  const childHandler = useChildrenHandler(fragment)
+  const childrenHandler = useNewHandler()
+  setParent(childrenHandler, parent)
 
-  parent.addChild(fragment)
-  onDestroy(() => { parent.removeChild(fragment) })
+  queueNanotask(() => {
+    updateChildren(parent)
+  }, 1, true)
 
-  innet(children, childHandler)
+  innet(children, childrenHandler, 0, true)
+
+  return EMPTY
 }

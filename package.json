@@ -1,6 +1,6 @@
 {
   "name": "@innet/native",
-  "version": "0.0.20-alpha-2",
+  "version": "0.0.20-alpha-4",
   "description": "Tools to build Mobile Application",
   "main": "index.js",
   "module": "index.es6.js",
@@ -53,14 +53,14 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "innet-jest": "^2.0.0",
-    "innetjs": "^3.0.0",
+    "innetjs": "^3.0.1",
     "jest": "^29.5.0",
     "jest-util": "^29.5.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@innet/jsx": "^2.0.0-rc.3",
-    "@innet/utils": "^2.0.2",
+    "@innet/utils": "^2.0.3-alpha.2",
     "@nativescript/core": "^8.9.9",
     "@watch-state/utils": "^0.0.1",
     "html-classes": "^2.0.2",

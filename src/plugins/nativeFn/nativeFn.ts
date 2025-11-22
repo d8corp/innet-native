@@ -1,24 +1,28 @@
 import innet, { type HandlerPlugin, useApp, useHandler } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 import { Watch } from 'watch-state'
 
-import { useChildrenHandler } from '../../hooks'
-import { Fragment } from '../../utils'
+import { useChildrenFragment } from '../../hooks'
+import { getChildren, updateChildren } from '../../utils'
 
 export function nativeFn (): HandlerPlugin {
   return () => {
     const fn = useApp<Function>()
-
-    const fragment = new Fragment()
-    const childrenHandler = useChildrenHandler(fragment)
+    const [childrenHandler, fragment] = useChildrenFragment()
+    const fragmentChildren = getChildren(fragment)
 
     innet(fragment, useHandler(), 0, true)
 
     new Watch(update => {
       if (update) {
-        fragment.removeChildren()
+        fragmentChildren.length = 0
+
+        queueNanotask(() => {
+          updateChildren(fragment, true)
+        }, 1, true)
       }
 
-      innet(fn(update), childrenHandler)
+      innet(fn(update), childrenHandler, 0, true)
     })
   }
 }

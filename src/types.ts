@@ -54,8 +54,16 @@ import {
   type WrapLayout,
 } from '@nativescript/core'
 import { type WatchValue } from '@watch-state/utils'
+import { type State } from 'watch-state'
 
-import { type ANIMATE_PARAMS, type ANIMATE_PROPS } from './constants'
+import {
+  type ANIMATE_PARAMS,
+  type ANIMATE_PROPS,
+  type CHILDREN,
+  type ENDING_ANIMATE, type PARENT,
+  type PARENT_FRAME,
+  type SUSPENSE,
+} from './constants'
 import { type JSX_ELEMENTS } from './elements'
 import { type Fragment, type InPage } from './utils'
 
@@ -233,10 +241,26 @@ export type WebViewProps = ViewProps<WebView> & {
   onLoadFinished?: (event: EventData) => void
 }
 
-export type ViewSetter<T extends ViewBase = ViewBase> = (view: T) => void
-export type Parent<T extends ViewBase = ViewBase> = T | ViewSetter<T>
+export type Parent<T extends ViewBase = ViewBase> = T | T[]
 
-export type ViewProp<T extends ViewTagName> = { [K in keyof InstanceType<typeof JSX_ELEMENTS[T]>]: InstanceType<typeof JSX_ELEMENTS[T]>[K] extends View ? K : never }[keyof InstanceType<typeof JSX_ELEMENTS[T]>]
+export type ViewProp<T extends ViewTagName> = {
+  [K in keyof InstanceType<typeof JSX_ELEMENTS[T]>]: InstanceType<typeof JSX_ELEMENTS[T]>[K] extends ViewBase ? K : never
+}[keyof InstanceType<typeof JSX_ELEMENTS[T]>]
 
 export type ViewTagName = keyof typeof JSX_ELEMENTS
 export type TagNameView = typeof JSX_ELEMENTS
+
+declare module 'innet' {
+  interface Handler {
+    [SUSPENSE]?: State<Set<Promise<any>>>
+    [PARENT_FRAME]?: Frame
+    [PARENT]?: Parent
+  }
+}
+
+declare module '@nativescript/core' {
+  interface ViewBase {
+    [CHILDREN]?: ViewBase[]
+    [ENDING_ANIMATE]?: AnimationDefinition
+  }
+}

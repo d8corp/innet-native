@@ -3,31 +3,28 @@ import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 import { queueNanotask } from 'queue-nano-task'
 import { onDestroy, scope, Watch } from 'watch-state'
 
-import { useChildrenHandler } from '../../hooks'
-import { Fragment } from '../../utils'
+import { useChildrenFragment } from '../../hooks'
 
 export const nativeIterable = (): HandlerPlugin => () => {
   const genericComponent = useApp()
 
   if (!(genericComponent instanceof GenericComponent)) return NEXT
 
-  const handler = useHandler()
   const { app: apps, data } = genericComponent
 
   if (!(data instanceof Promise)) {
-    innet(data.value, handler)
-    queueNanotask(() => genericComponent.app.next())
+    queueNanotask(() => genericComponent.app.next(), 0, true)
+    innet(data.value, useHandler(), 0, true)
     return
   }
 
-  const fragment = new Fragment()
-  const childrenHandler = useChildrenHandler(fragment)
+  const [childrenHandler, fragment] = useChildrenFragment()
 
   const { activeWatcher } = scope
   let watcher: Watch
   let deleted = false
 
-  innet(fragment, handler, 0, true)
+  innet(fragment, useHandler(), 0, true)
 
   onDestroy(() => {
     deleted = true
@@ -46,7 +43,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
         fragment.removeChildren()
       }
 
-      innet(app, childrenHandler)
+      innet(app, childrenHandler, 0, true)
     })
 
     scope.activeWatcher = undefined

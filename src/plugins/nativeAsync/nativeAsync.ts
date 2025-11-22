@@ -1,17 +1,17 @@
 import innet, { type HandlerPlugin, useApp, useHandler } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 import { onDestroy, scope } from 'watch-state'
 
-import { useChildrenHandler } from '../../hooks'
-import { Fragment } from '../../utils'
+import { useChildrenFragment } from '../../hooks'
+import { updateChildren } from '../../utils'
 
 export function nativeAsync (): HandlerPlugin {
   return () => {
-    const handler = useHandler()
+    const { activeWatcher } = scope
     const app = useApp<Promise<any>>()
-    const fragment = new Fragment()
-    const childHandler = useChildrenHandler(fragment)
+    const [childrenHandler, fragment] = useChildrenFragment()
 
-    innet(fragment, handler, 0, true)
+    innet(fragment, useHandler(), 0, true)
 
     let removed = false
 
@@ -19,12 +19,16 @@ export function nativeAsync (): HandlerPlugin {
       removed = true
     })
 
-    const { activeWatcher } = scope
-
     app.then(data => {
       if (!removed) {
         scope.activeWatcher = activeWatcher
-        innet(data, childHandler)
+
+        innet(data, childrenHandler, 0, true)
+
+        queueNanotask(() => {
+          updateChildren(fragment)
+        }, 1, true)
+
         scope.activeWatcher = undefined
       }
     })

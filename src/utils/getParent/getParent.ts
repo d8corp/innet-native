@@ -4,5 +4,5 @@ import { PARENT } from '../../constants'
 import { type Parent } from '../../types'
 
 export function getParent<T extends Parent> (handler: Handler): T {
-  return handler[PARENT]
+  return handler[PARENT] as T
 }

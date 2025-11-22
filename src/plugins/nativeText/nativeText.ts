@@ -1,5 +1,5 @@
 import { FormattedString, Label, LayoutBase, Span, TextBase } from '@nativescript/core'
-import { type HandlerPlugin, useApp } from 'innet'
+import innet, { type HandlerPlugin, useApp, useHandler } from 'innet'
 
 import { useParent } from '../../hooks'
 
@@ -7,11 +7,12 @@ export function nativeText (): HandlerPlugin {
   return () => {
     const app = useApp<string>()
     const parent = useParent()
+    const handler = useHandler()
 
     if (typeof parent === 'function') {
       const label = new Label()
       label.text = app
-      parent(label)
+      innet(label, handler, 0, true)
       return
     }
 
@@ -23,14 +24,14 @@ export function nativeText (): HandlerPlugin {
     if (parent instanceof FormattedString) {
       const span = new Span()
       span.text = app
-      parent.spans.push(span)
+      innet(span, handler, 0, true)
       return
     }
 
     if (parent instanceof LayoutBase) {
       const label = new Label()
       label.text = app
-      parent.addChild(label)
+      innet(label, handler, 0, true)
       return
     }
 
