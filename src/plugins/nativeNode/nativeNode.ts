@@ -4,7 +4,7 @@ import {
   ContentView,
   FormattedString,
   Frame,
-  LayoutBase,
+  LayoutBase, Page,
   SegmentedBar, SegmentedBarItem,
   Span,
   TabView,
@@ -17,7 +17,7 @@ import { queueNanotask } from 'queue-nano-task'
 
 import { PARENT_FRAME } from '../../constants'
 import { useParent } from '../../hooks'
-import { getChildren, InPage, updateChildren } from '../../utils'
+import { getChildren, updateChildren } from '../../utils'
 
 const viewParents = ([
   [Span, FormattedString],
@@ -37,7 +37,7 @@ export function nativeNode (): HandlerPlugin {
     } else {
       const parentChildren = getChildren(parent)
 
-      if (app instanceof InPage) {
+      if (app instanceof Page) {
         const handler = useHandler()
         const parentFrame = handler[PARENT_FRAME]
 

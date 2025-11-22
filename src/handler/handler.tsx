@@ -154,23 +154,23 @@ declare global {
     }
 
     interface IntrinsicElements {
-      span: SpanProps
-      'root-layout': RootLayoutProps
-      'flexbox-layout': FlexboxLayoutProps
-      button: ButtonProps
-      'formatted-string': FormattedStringProps
-      page: PageProps
+      span: SpanProps // done
+      'root-layout': RootLayoutProps // done
+      'flexbox-layout': FlexboxLayoutProps // done
+      button: ButtonProps // done
+      'formatted-string': FormattedStringProps // done
+      page: PageProps // done
       'action-bar': ActionBarProps
       'action-item': ActionItemProps
-      'grid-layout': GridLayoutProps
-      'stack-layout': StackLayoutProps
-      'wrap-layout': WrapLayoutProps
-      'dock-layout': DockLayoutProps
-      'absolute-layout': AbsoluteLayoutProps
-      label: LabelProps
-      frame: FrameProps
-      fragment: FragmentProps
-      image: ImageProps
+      'grid-layout': GridLayoutProps // done
+      'stack-layout': StackLayoutProps // done
+      'wrap-layout': WrapLayoutProps // done
+      'dock-layout': DockLayoutProps // done
+      'absolute-layout': AbsoluteLayoutProps // done
+      label: LabelProps // done
+      frame: FrameProps // done
+      fragment: FragmentProps // done
+      image: ImageProps // done
       'navigation-button': NavigationButtonProps
       'activity-indicator': ActivityIndicatorProps
       'date-picker': DatePickerProps
@@ -184,11 +184,11 @@ declare global {
       'segmented-bar': SegmentedBarProps
       'segmented-bar-item': SegmentedBarItemProps
       slider: SliderProps
-      switch: SwitchProps
+      switch: SwitchProps // done
       'tab-view': TabViewProps
       'tab-view-item': TabViewItemProps
-      'text-field': TextFieldProps
-      'text-view': TextViewProps
+      'text-field': TextFieldProps // done
+      'text-view': TextViewProps // done
       'time-picker': TimePickerProps
       'web-view': WebViewProps
     }

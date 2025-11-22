@@ -2,7 +2,7 @@ import {
   ActionBar, ActionItem, ContentView,
   FormattedString,
   Frame,
-  LayoutBase,
+  LayoutBase, type Page,
   SegmentedBar,
   TabView, TabViewItem,
   TextBase,
@@ -10,7 +10,6 @@ import {
 } from '@nativescript/core'
 
 import { getChildren } from '../getChildren'
-import { type InPage } from '../views'
 
 export function updateChildren (app: ViewBase, clear = false) {
   const children: any[] = getChildren(app)
@@ -18,7 +17,7 @@ export function updateChildren (app: ViewBase, clear = false) {
   if (!children.length && !clear) return
 
   if (app instanceof Frame) {
-    const child = children[0] as InPage
+    const child = children[0] as Page
 
     app.navigate({
       ...child.navigation,

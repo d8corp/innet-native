@@ -4,14 +4,14 @@ import {
   FlexboxLayout,
   FormattedString, Frame,
   GridLayout, HtmlView, Image,
-  Label, ListPicker, ListView, NavigationButton, Placeholder, Progress,
+  Label, ListPicker, ListView, NavigationButton, Page, Placeholder, Progress,
   RootLayout, ScrollView, SearchBar, SegmentedBar, SegmentedBarItem, Slider,
   Span,
   StackLayout,
   Switch, TabView, TabViewItem, TextField, TextView, TimePicker, type ViewBase, WebView, WrapLayout,
 } from '@nativescript/core'
 
-import { Fragment, InPage } from './utils/views'
+import { Fragment } from './utils/views'
 
 export const JSX_ELEMENTS = {
   label: Label,
@@ -27,7 +27,7 @@ export const JSX_ELEMENTS = {
   'dock-layout': DockLayout,
   'absolute-layout': AbsoluteLayout,
   frame: Frame,
-  page: InPage,
+  page: Page,
   'action-bar': ActionBar,
   'action-item': ActionItem,
   fragment: Fragment,
