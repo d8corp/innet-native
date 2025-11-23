@@ -1,16 +1,46 @@
 import { type Props, useProps } from '@innet/jsx'
-import { type AnimationDefinition, View, type ViewBase } from '@nativescript/core'
+import {
+  ActionBar, ActionItem,
+  type AnimationDefinition,
+  FormattedString,
+  Page, TabViewItem,
+  TextField, TextView,
+  View,
+  type ViewBase,
+} from '@nativescript/core'
 import { use, watchValueToValueWatcher } from '@watch-state/utils'
 import innet, { useNewHandler } from 'innet'
 import { queueNanotask } from 'queue-nano-task'
 import SyncTimer from 'sync-timer'
 import { onDestroy, unwatch, Watch } from 'watch-state'
 
-import { PARENT, RENDER_PROPS } from '../../constants'
-import type { AnimateProp, AnimatePropsParamsKey, ViewTagName } from '../../types'
+import { PARENT } from '../../constants'
+import type { AnimateProp, AnimatePropsParamsKey } from '../../types'
 import { isAnimateParam, isAnimateProp, setViewEndingAnimate } from '../../utils'
 
-export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
+const RENDER_PROPS = new Map<abstract new () => ViewBase, Record<string, abstract new () => ViewBase>>([
+  [Page, {
+    actionBar: ActionBar,
+    content: View,
+  }],
+  [TextField, {
+    formattedText: FormattedString,
+  }],
+  [TextView, {
+    formattedText: FormattedString,
+  }],
+  [ActionBar, {
+    titleView: View,
+  }],
+  [ActionItem, {
+    actionView: View,
+  }],
+  [TabViewItem, {
+    view: View,
+  }],
+])
+
+export function useNativeProps (target: ViewBase) {
   const props = useProps<Props>()
 
   if (target instanceof View) {
@@ -155,9 +185,10 @@ export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
       continue
     }
 
-    if (tagName && tagName in RENDER_PROPS && key in RENDER_PROPS[tagName as keyof typeof RENDER_PROPS]) {
-      const tag = tagName as keyof typeof RENDER_PROPS
-      const tagView = RENDER_PROPS[tag][key as keyof typeof RENDER_PROPS[typeof tag]]
+    const renderProps = RENDER_PROPS.get(target?.constructor as any)
+
+    if (renderProps && key in renderProps) {
+      const tagView = renderProps[key]
       const propHandler = useNewHandler()
       const children: ViewBase[] = propHandler[PARENT] = []
 
@@ -170,7 +201,7 @@ export function useNativeProps (target: ViewBase, tagName?: ViewTagName) {
           return
         }
 
-        throw Error(`You cannot use ${String(view)} in <${tagName} ${key}={...}>`)
+        throw Error(`You cannot use ${String(view)} in <${target.constructor.name} ${key}={...}>`)
       }
 
       const watchValue = watchValueToValueWatcher(value)

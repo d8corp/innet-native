@@ -1,38 +1,4 @@
-import {
-  ActionBar,
-  type AnimationDefinition,
-  FormattedString,
-  View,
-} from '@nativescript/core'
-
-import { type JSX_ELEMENTS } from './elements'
-import { type ViewProp, type ViewTagName } from './types'
-
-export const RENDER_PROPS = {
-  page: {
-    actionBar: ActionBar,
-    content: View,
-  },
-  'text-field': {
-    formattedText: FormattedString,
-  },
-  'text-view': {
-    formattedText: FormattedString,
-  },
-  'action-bar': {
-    titleView: View,
-  },
-  'action-item': {
-    actionView: View,
-  },
-  'tab-view-item': {
-    view: View,
-  },
-} as const satisfies {
-  readonly [T in ViewTagName]?: {
-    readonly [K in ViewProp<T>]?: abstract new () => InstanceType<typeof JSX_ELEMENTS[T]>[K]
-  };
-}
+import { type AnimationDefinition } from '@nativescript/core'
 
 export const PARENT: unique symbol = Symbol('parent')
 export const FOR_VALUE = Symbol('FOR_VALUE') as unknown as string

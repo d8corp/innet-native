@@ -1,17 +1,36 @@
 import {
-  type AbsoluteLayout,
-  type Button, type DockLayout, type EditableTextBase,
+  type AbsoluteLayout, type ActionBar, type ActionItem,
+  type ActivityIndicator,
+  type Button,
+  type DatePicker,
+  type DockLayout,
+  type EditableTextBase,
   type FlexboxLayout,
-  type FormattedString, type Frame, type Image, type Label, type Page, type ProxyViewContainer,
-  type RootLayout,
-  type Span, type StackLayout, type Switch, type TextField,
+  type FormattedString,
+  type Frame,
+  type HtmlView,
+  type Image,
+  type Label, type ListPicker, type ListView, type NavigationButton,
+  type Page,
+  type Placeholder, type Progress,
+  type ProxyViewContainer,
+  type RootLayout, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem,
+  type Slider,
+  type Span,
+  type StackLayout,
+  type Switch, type TabViewItem,
+  type TextField,
+  type TimePicker,
   type View,
-  type ViewBase, type WrapLayout,
+  type ViewBase,
+  type WebView,
+  type WrapLayout,
 } from '@nativescript/core'
 import { type ContentView } from '@nativescript/core/ui/content-view'
 import { type ContainerView } from '@nativescript/core/ui/core/view'
 import { type GridLayout } from '@nativescript/core/ui/layouts/grid-layout'
 import { type LayoutBase } from '@nativescript/core/ui/layouts/layout-base'
+import { type TabView } from '@nativescript/core/ui/tab-view'
 import { type TextBase } from '@nativescript/core/ui/text-base'
 import { type TextView } from '@nativescript/core/ui/text-view'
 
@@ -334,5 +353,189 @@ T,
 export type TextViewNSProps<T extends TextView = TextView, R extends keyof T = never> = EditableTextBaseNSProps<
 T,
 | 'maxLines'
+| R
+>
+
+export type TimePickerNSProps<T extends TimePicker = TimePicker, R extends keyof T = never> = ViewNSProps<
+T,
+| 'hour'
+| 'minute'
+| 'time'
+| 'maxHour'
+| 'maxMinute'
+| 'minHour'
+| 'minMinute'
+| 'minuteInterval'
+| 'iosPreferredDatePickerStyle'
+| R
+>
+
+export type WebViewNSProps<T extends WebView = WebView, R extends keyof T = never> = ViewNSProps<
+T,
+| 'src'
+| 'disableZoom'
+| 'iosAllowInlineMediaPlayback'
+| R
+>
+
+export type SliderNSProps<T extends Slider = Slider, R extends keyof T = never> = ViewNSProps<
+T,
+| 'value'
+| 'minValue'
+| 'maxValue'
+| 'accessibilityStep'
+| R
+>
+
+export type PlaceholderNSProps<T extends Placeholder = Placeholder, R extends keyof T = never> = ViewNSProps<
+T,
+| R
+>
+
+export type ActivityIndicatorNSProps<T extends ActivityIndicator = ActivityIndicator, R extends keyof T = never> = ViewNSProps<
+T,
+| 'busy'
+| 'iosIndicatorViewStyle'
+| R
+>
+
+export type DatePickerNSProps<T extends DatePicker = DatePicker, R extends keyof T = never> = ViewNSProps<
+T,
+| 'year'
+| 'month'
+| 'day'
+| 'date'
+| 'maxDate'
+| 'minDate'
+| 'iosPreferredDatePickerStyle'
+| 'showTime'
+| R
+>
+
+export type HtmlViewNSProps<T extends HtmlView = HtmlView, R extends keyof T = never> = ViewNSProps<
+T,
+| 'html'
+| 'selectable'
+| 'linkColor'
+| R
+>
+
+export type ProgressNSProps<T extends Progress = Progress, R extends keyof T = never> = ViewNSProps<
+T,
+| 'value'
+| 'maxValue'
+| R
+>
+
+export type ScrollViewNSProps<T extends ScrollView = ScrollView, R extends keyof T = never> = ContentViewNSProps<
+T,
+| 'isScrollEnabled'
+| 'scrollBarIndicatorVisible'
+| 'orientation'
+| R
+>
+
+export type SearchBarNSProps<T extends SearchBar = SearchBar, R extends keyof T = never> = ViewNSProps<
+T,
+| 'text'
+| 'hint'
+| 'textFieldBackgroundColor'
+| 'textFieldHintColor'
+| 'clearButtonColor'
+| R
+>
+
+export type ActionItemNSProps<T extends ActionItem = ActionItem, R extends keyof T = never> = ViewBaseNSProps<
+T,
+| 'text'
+| 'icon'
+| 'actionView'
+| 'visibility'
+| R
+>
+
+export type NavigationButtonNSProps<T extends NavigationButton = NavigationButton, R extends keyof T = never> = ActionItemNSProps<
+T,
+| R
+>
+
+export type ActionBarNSProps<T extends ActionBar = ActionBar, R extends keyof T = never> = ViewNSProps<
+T,
+| 'title'
+| 'titleView'
+| 'navigationButton'
+| 'flat'
+| 'actionItems'
+| 'iosIconRenderingMode'
+| R
+>
+
+export type ListPickerNSProps<T extends ListPicker = ListPicker, R extends keyof T = never> = ViewNSProps<
+T,
+| 'selectedIndex'
+| 'items'
+| R
+>
+
+export type ListViewNSProps<T extends ListView = ListView, R extends keyof T = never> = ViewNSProps<
+T,
+| 'items'
+| 'itemTemplate'
+| 'itemTemplates'
+| 'itemTemplateSelector'
+| 'itemIdGenerator'
+| 'separatorColor'
+| 'rowHeight'
+| 'iosEstimatedRowHeight'
+| 'stickyHeader'
+| 'stickyHeaderTemplate'
+| 'stickyHeaderHeight'
+| 'stickyHeaderTopPadding'
+| 'sectioned'
+| 'showSearch'
+| 'searchAutoHide'
+| R
+>
+
+export type SegmentedBarNSProps<T extends SegmentedBar = SegmentedBar, R extends keyof T = never> = ViewNSProps<
+T,
+| 'selectedIndex'
+| 'selectedBackgroundColor'
+| 'selectedTextColor'
+| 'items'
+| R
+>
+
+export type SegmentedBarItemNSProps<T extends SegmentedBarItem = SegmentedBarItem, R extends keyof T = never> = ViewBaseNSProps<
+T,
+| 'title'
+| R
+>
+
+export type TabViewNSProps<T extends TabView = TabView, R extends keyof T = never> = ViewNSProps<
+T,
+| 'items'
+| 'selectedIndex'
+| 'tabTextFontSize'
+| 'tabTextColor'
+| 'tabBackgroundColor'
+| 'selectedTabTextColor'
+| 'iosTabBarMinimizeBehavior'
+| 'iosBottomAccessory'
+| 'androidSelectedTabHighlightColor'
+| 'iosIconRenderingMode'
+| 'androidIconRenderingMode'
+| 'androidOffscreenTabLimit'
+| 'androidTabsPosition'
+| 'androidSwipeEnabled'
+| R
+>
+
+export type TabViewItemNSProps<T extends TabViewItem = TabViewItem, R extends keyof T = never> = ViewBaseNSProps<
+T,
+| 'title'
+| 'view'
+| 'iconSource'
+| 'textTransform'
 | R
 >
