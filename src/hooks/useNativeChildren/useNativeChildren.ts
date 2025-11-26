@@ -8,14 +8,14 @@ import { setParent } from '../../utils'
 export function useNativeChildren (target: ViewBase) {
   const children = useChildren()
 
-  if (children) {
-    const childrenHandler = useNewHandler()
+  if (!children) return
 
-    if (target instanceof Frame) {
-      childrenHandler[PARENT_FRAME] = target
-    }
+  const childrenHandler = useNewHandler()
 
-    setParent(childrenHandler, target)
-    innet(children, childrenHandler, 0, true)
+  if (target instanceof Frame) {
+    childrenHandler[PARENT_FRAME] = target
   }
+
+  setParent(childrenHandler, target)
+  innet(children, childrenHandler, 0, true)
 }

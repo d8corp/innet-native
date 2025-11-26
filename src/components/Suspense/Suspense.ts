@@ -22,7 +22,7 @@ export function Suspense ({ fallback, children }: SuspenseProps) {
   innet(children, childrenHandler, 0, true)
 
   new Watch(() => {
-    fragment.shown = !showFallback.value
+    fragment.visibility = showFallback.value ? 'hidden' : 'visible'
   })
 
   return EMPTY

@@ -14,15 +14,19 @@ export function nativeFn (): HandlerPlugin {
     innet(fragment, useHandler(), 0, true)
 
     new Watch(update => {
-      if (update) {
-        fragmentChildren.length = 0
+      const children = fn(update)
 
-        queueNanotask(() => {
-          updateChildren(fragment, true)
-        }, 1, true)
-      }
+      queueNanotask(() => {
+        if (update) {
+          fragmentChildren.length = 0
 
-      innet(fn(update), childrenHandler, 0, true)
+          queueNanotask(() => {
+            updateChildren(fragment, true)
+          }, 1, true)
+        }
+
+        innet(children, childrenHandler, 0, true)
+      }, 0, true)
     })
   }
 }

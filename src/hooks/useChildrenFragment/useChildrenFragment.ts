@@ -1,9 +1,10 @@
+import { ProxyViewContainer } from '@nativescript/core'
 import { useNewHandler } from 'innet'
 
-import { Fragment, setParent } from '../../utils'
+import { setParent } from '../../utils'
 
 export function useChildrenFragment () {
-  const fragment = new Fragment()
+  const fragment = new ProxyViewContainer()
   const childrenHandler = useNewHandler()
 
   setParent(childrenHandler, fragment)
