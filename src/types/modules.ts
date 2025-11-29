@@ -1,7 +1,7 @@
 import type { AnimationDefinition, Frame, NavigationEntry } from '@nativescript/core'
 import type { State } from 'watch-state'
 
-import type { CHILDREN, ENDING_ANIMATE, PARENT, PARENT_FRAME, SUSPENSE } from '../constants'
+import { type CHILDREN, type ENDING_ANIMATE, type PARENT, type PARENT_FRAME, type SUSPENSE } from '../constants'
 import type {
   AbsoluteLayoutProps,
   ActionBarProps,

@@ -1,10 +1,15 @@
 import { Application, View, type ViewBase } from '@nativescript/core'
-import innet, { type HandlerPlugin, PLUGINS, useApp, useNewHandler } from 'innet'
+import { withScope } from '@watch-state/utils'
+import innet, { type Handler, type HandlerPlugin, HOOK, PLUGINS, useApp, useNewHandler } from 'innet'
 import { queueNanotask } from 'queue-nano-task'
 
 import { PARENT } from '../../constants'
 
-export function native (): HandlerPlugin {
+export function native (handler: Handler): HandlerPlugin {
+  const prevHook = handler[HOOK]
+
+  handler[HOOK] = () => withScope(prevHook())
+
   const nativePlugin = () => {
     const app = useApp()
     const handler = useNewHandler()

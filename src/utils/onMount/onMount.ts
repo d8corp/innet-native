@@ -1,5 +1,6 @@
+import { withScope } from '@watch-state/utils'
 import { queueNanotask } from 'queue-nano-task'
 
 export function onMount (callback: () => void) {
-  queueNanotask(callback, 1)
+  queueNanotask(withScope(callback), 1)
 }

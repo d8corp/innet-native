@@ -1,3 +1,4 @@
+import { withScope } from '@watch-state/utils'
 import innet, { type HandlerPlugin, useApp, useHandler } from 'innet'
 import { queueNanotask } from 'queue-nano-task'
 import { Watch } from 'watch-state'
@@ -16,7 +17,7 @@ export function nativeFn (): HandlerPlugin {
     new Watch(update => {
       const children = fn(update)
 
-      queueNanotask(() => {
+      queueNanotask(withScope(() => {
         if (update) {
           fragmentChildren.length = 0
 
@@ -26,7 +27,7 @@ export function nativeFn (): HandlerPlugin {
         }
 
         innet(children, childrenHandler, 0, true)
-      }, 0, true)
+      }), 0, true)
     })
   }
 }

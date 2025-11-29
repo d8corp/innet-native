@@ -1,7 +1,8 @@
 import { GenericComponent } from '@innet/jsx'
+import { withScope } from '@watch-state/utils'
 import innet, { type HandlerPlugin, NEXT, useApp, useHandler } from 'innet'
 import { queueNanotask } from 'queue-nano-task'
-import { onDestroy, scope, Watch } from 'watch-state'
+import { onDestroy, Watch } from 'watch-state'
 
 import { useChildrenFragment } from '../../hooks'
 
@@ -19,8 +20,6 @@ export const nativeIterable = (): HandlerPlugin => () => {
   }
 
   const [childrenHandler, fragment] = useChildrenFragment()
-
-  const { activeWatcher } = scope
   let watcher: Watch
   let deleted = false
 
@@ -30,9 +29,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
     deleted = true
   })
 
-  const call = (app: any) => {
-    scope.activeWatcher = activeWatcher
-
+  const call = withScope((app: any) => {
     if (watcher) {
       watcher.destroy()
       fragment.removeChildren()
@@ -45,9 +42,7 @@ export const nativeIterable = (): HandlerPlugin => () => {
 
       innet(app, childrenHandler, 0, true)
     })
-
-    scope.activeWatcher = undefined
-  }
+  })
 
   const run = async () => {
     for await (const app of apps) {

@@ -8,7 +8,7 @@ import {
   View,
   type ViewBase,
 } from '@nativescript/core'
-import { use, watchValueToValueWatcher } from '@watch-state/utils'
+import { use, watchValueToValueWatcher, withScope } from '@watch-state/utils'
 import innet, { useNewHandler } from 'innet'
 import { queueNanotask } from 'queue-nano-task'
 import SyncTimer from 'sync-timer'
@@ -188,14 +188,14 @@ export function useNativeProps (target: ViewBase) {
     const renderProps = RENDER_PROPS.get(target?.constructor as any)
 
     if (renderProps && key in renderProps) {
-      const tagView = renderProps[key]
+      const PropView = renderProps[key]
       const propHandler = useNewHandler()
       const children: ViewBase[] = propHandler[PARENT] = []
 
       const render = () => {
         const view = children[0]
 
-        if (view instanceof tagView) {
+        if (view instanceof PropView) {
           // @ts-expect-error TODO: check types
           target[key] = view
           return
@@ -208,8 +208,12 @@ export function useNativeProps (target: ViewBase) {
 
       if (typeof watchValue === 'function') {
         new Watch((update) => {
-          queueNanotask(render, 1, true)
-          innet(use(watchValue, update), propHandler, 0, true)
+          const result = watchValue(update)
+
+          queueNanotask(withScope(() => {
+            queueNanotask(render, 1, true)
+            innet(result, propHandler, 0, true)
+          }), 0, true)
         })
 
         continue
