@@ -2,23 +2,25 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var jsx = require('@innet/jsx');
 var innet = require('innet');
-var watchState = require('watch-state');
-require('../../hooks/index.js');
+var queueNanoTask = require('queue-nano-task');
 require('../../utils/index.js');
-var Fragment = require('../../utils/views/Fragment/Fragment.js');
-var useChildrenHandler = require('../../hooks/useChildrenHandler/useChildrenHandler.js');
+var setParent = require('../../utils/setParent/setParent.js');
+var updateChildren = require('../../utils/updateChildren/updateChildren.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var innet__default = /*#__PURE__*/_interopDefaultLegacy(innet);
 
 function Portal({ parent, children }) {
-    const fragment = new Fragment.Fragment();
-    const childHandler = useChildrenHandler.useChildrenHandler(fragment);
-    parent.addChild(fragment);
-    watchState.onDestroy(() => { parent.removeChild(fragment); });
-    innet__default["default"](children, childHandler);
+    const childrenHandler = innet.useNewHandler();
+    setParent.setParent(childrenHandler, parent);
+    queueNanoTask.queueNanotask(() => {
+        updateChildren.updateChildren(parent);
+    }, 1, true);
+    innet__default["default"](children, childrenHandler, 0, true);
+    return jsx.EMPTY;
 }
 
 exports.Portal = Portal;

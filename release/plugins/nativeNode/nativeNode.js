@@ -9,100 +9,39 @@ var constants = require('../../constants.js');
 require('../../hooks/index.js');
 require('../../utils/index.js');
 var useParent = require('../../hooks/useParent/useParent.js');
-var InPage = require('../../utils/views/InPage/InPage.js');
+var getChildren = require('../../utils/getChildren/getChildren.js');
+var updateChildren = require('../../utils/updateChildren/updateChildren.js');
 
 function nativeNode() {
     return () => {
-        const parent = useParent.useParent();
         const app = innet.useApp();
-        queueNanoTask.queueNanotask(() => {
-            if (typeof parent === 'function') {
-                parent(app);
-                return;
-            }
-            if (app instanceof InPage.InPage) {
+        const parent = useParent.useParent();
+        if (Array.isArray(parent)) {
+            parent.push(app);
+        }
+        else {
+            const parentChildren = getChildren.getChildren(parent);
+            if (app instanceof core.Page) {
                 const handler = innet.useHandler();
-                const frame = handler[constants.PARENT_FRAME];
-                if (!frame) {
-                    throw Error('You can place <page> only in a <frame>');
+                const parentFrame = handler[constants.PARENT_FRAME];
+                if (!parentFrame) {
+                    throw Error(`You can place ${app} only in a Frame`);
                 }
-                frame.navigate(Object.assign(Object.assign({}, app.navigation), { create: () => app }));
-                return;
+                if (parent instanceof core.Frame) {
+                    parentChildren.push(app);
+                }
+                else {
+                    queueNanoTask.queueNanotask(() => {
+                        parentFrame.navigate(Object.assign(Object.assign({}, app.navigation), { create: () => app }));
+                    }, 1, true);
+                }
             }
-            if (app instanceof core.Span) {
-                if (parent instanceof core.FormattedString) {
-                    parent.spans.unshift(app);
-                    return;
-                }
-                throw Error(`You can place <span> only in <string>, current parent: ${parent.typeName}`);
+            else {
+                parentChildren.push(app);
             }
-            if (app instanceof core.FormattedString) {
-                if (parent instanceof core.TextBase) {
-                    parent.formattedText = app;
-                    return;
-                }
-                throw Error(`You can place <string> only in text based elements, current parent: ${parent.typeName}`);
-            }
-            if (app instanceof core.ActionBar) {
-                if (parent instanceof InPage.InPage) {
-                    parent.actionBar = app;
-                    return;
-                }
-                throw Error(`You can place <action-bar> only in <page>, current parent: ${parent.typeName}`);
-            }
-            if (app instanceof core.ActionItem) {
-                if (parent instanceof core.ActionBar) {
-                    parent.actionItems.addItem(app);
-                    return;
-                }
-                throw Error(`You can place <action-item> only in <action-bar>, current parent: ${parent.typeName}`);
-            }
-            if (app instanceof core.SegmentedBarItem) {
-                if (parent instanceof core.SegmentedBar) {
-                    if (!parent.items) {
-                        parent.items = [];
-                    }
-                    parent.items.unshift(app);
-                    return;
-                }
-                throw Error(`You can place <segmented-bar-item> only in <segmented-bar>, current parent: ${parent.typeName}`);
-            }
-            if (app instanceof core.TabViewItem) {
-                if (parent instanceof core.TabView) {
-                    if (parent.items) {
-                        parent.items = [app, ...parent.items];
-                    }
-                    else {
-                        parent.items = [app];
-                    }
-                    return;
-                }
-                throw Error(`You can place <tab-view-item> only in <tab-view>, current parent: ${parent.typeName}`);
-            }
-            if (app instanceof core.View) {
-                if (parent instanceof core.ActionBar) {
-                    parent.titleView = app;
-                    return;
-                }
-                if (parent instanceof core.LayoutBase) {
-                    parent.insertChild(app, 0);
-                    return;
-                }
-                if (parent instanceof core.ContentView) {
-                    parent.content = app;
-                    return;
-                }
-                if (parent instanceof core.ActionItem) {
-                    parent.actionView = app;
-                    return;
-                }
-                if (parent instanceof core.TabViewItem) {
-                    parent.view = app;
-                    return;
-                }
-                throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
-            }
-            throw Error(`${app.typeName} cannot be in ${parent.typeName}`);
+        }
+        queueNanoTask.queueNanotask(() => {
+            updateChildren.updateChildren(app);
         }, 1, true);
     };
 }

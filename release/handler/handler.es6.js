@@ -1,10 +1,7 @@
-import { jsxComponent, jsxPlugins } from '@innet/jsx';
+import { jsxComponent } from '@innet/jsx';
 import { arraySync, nullish, promise, fn, string, number, array, object } from '@innet/utils';
-import { View, Application } from '@nativescript/core';
-import innet, { createHandler, useApp } from 'innet';
-import { queueNanotask } from 'queue-nano-task';
+import { createHandler } from 'innet';
 import '../plugins/index.es6.js';
-import '../utils/index.es6.js';
 import { state } from '../plugins/state/state.es6.js';
 import { nativeIterable } from '../plugins/nativeIterable/nativeIterable.es6.js';
 import { nativeJSX } from '../plugins/nativeJSX/nativeJSX.es6.js';
@@ -13,19 +10,17 @@ import { nativeText } from '../plugins/nativeText/nativeText.es6.js';
 import { nativeNode } from '../plugins/nativeNode/nativeNode.es6.js';
 import { suspense } from '../plugins/suspense/suspense.es6.js';
 import { nativeAsync } from '../plugins/nativeAsync/nativeAsync.es6.js';
+import { native } from '../plugins/native/native.es6.js';
 import { view } from '../plugins/view/view.es6.js';
-import { setParent } from '../utils/setParent/setParent.es6.js';
 
 const arrayPlugins = [
     arraySync,
 ];
-const JSXPlugins = {};
 const objectPlugins = [
     state,
     nativeIterable,
     nativeJSX,
     jsxComponent,
-    jsxPlugins(JSXPlugins),
 ];
 const fnPlugins = [
     nativeFn,
@@ -43,7 +38,8 @@ const promisePlugins = [
     suspense,
     nativeAsync,
 ];
-const handlerInner = createHandler([
+const handler = createHandler([
+    native,
     nullish([]),
     promise(promisePlugins),
     view(nodePlugins),
@@ -53,20 +49,5 @@ const handlerInner = createHandler([
     array(arrayPlugins),
     object(objectPlugins),
 ]);
-const handler = createHandler([
-    () => () => {
-        const app = useApp();
-        const handler = Object.create(handlerInner);
-        setParent(handler, (view) => {
-            if (!(view instanceof View)) {
-                throw Error(`Unknown view ${String(view)} used as root`);
-            }
-            queueNanotask(() => {
-                Application.run({ create: () => view });
-            }, 1);
-        });
-        innet(app, handler);
-    },
-]);
 
-export { JSXPlugins, arrayPlugins, fnPlugins, handler, nodePlugins, numberPlugins, objectPlugins, promisePlugins, stringPlugins };
+export { arrayPlugins, fnPlugins, handler, nodePlugins, numberPlugins, objectPlugins, promisePlugins, stringPlugins };

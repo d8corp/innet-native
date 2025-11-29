@@ -1,26 +1,28 @@
-import innet, { useHandler, useApp } from 'innet';
-import { onDestroy, scope } from 'watch-state';
+import innet, { useApp, useHandler } from 'innet';
+import { queueNanotask } from 'queue-nano-task';
+import { scope, onDestroy } from 'watch-state';
 import '../../hooks/index.es6.js';
 import '../../utils/index.es6.js';
-import { Fragment } from '../../utils/views/Fragment/Fragment.es6.js';
-import { useChildrenHandler } from '../../hooks/useChildrenHandler/useChildrenHandler.es6.js';
+import { useChildrenFragment } from '../../hooks/useChildrenFragment/useChildrenFragment.es6.js';
+import { updateChildren } from '../../utils/updateChildren/updateChildren.es6.js';
 
 function nativeAsync() {
     return () => {
-        const handler = useHandler();
+        const { activeWatcher } = scope;
         const app = useApp();
-        const fragment = new Fragment();
-        const childHandler = useChildrenHandler(fragment);
-        innet(fragment, handler, 0, true);
+        const [childrenHandler, fragment] = useChildrenFragment();
+        innet(fragment, useHandler(), 0, true);
         let removed = false;
         onDestroy(() => {
             removed = true;
         });
-        const { activeWatcher } = scope;
         app.then(data => {
             if (!removed) {
                 scope.activeWatcher = activeWatcher;
-                innet(data, childHandler);
+                innet(data, childrenHandler, 0, true);
+                queueNanotask(() => {
+                    updateChildren(fragment);
+                }, 1, true);
                 scope.activeWatcher = undefined;
             }
         });

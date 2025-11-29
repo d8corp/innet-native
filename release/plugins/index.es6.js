@@ -7,3 +7,4 @@ import './nativeNode/index.es6.js';
 import './view/index.es6.js';
 import './nativeJSX/index.es6.js';
 import './suspense/index.es6.js';
+import './native/index.es6.js';

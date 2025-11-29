@@ -6,4 +6,3 @@ export * from './plugins';
 export * from './utils';
 export * from './constants';
 export * from './types';
-export * from './elements';

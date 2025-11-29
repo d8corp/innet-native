@@ -2,30 +2,28 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var jsx = require('@innet/jsx');
 var innet = require('innet');
 var watchState = require('watch-state');
 var constants = require('../../constants.js');
 require('../../hooks/index.js');
-require('../../utils/index.js');
-var Fragment = require('../../utils/views/Fragment/Fragment.js');
-var useChildrenHandler = require('../../hooks/useChildrenHandler/useChildrenHandler.js');
+var useChildrenFragment = require('../../hooks/useChildrenFragment/useChildrenFragment.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var innet__default = /*#__PURE__*/_interopDefaultLegacy(innet);
 
 function Suspense({ fallback, children }) {
-    const fragment = new Fragment.Fragment();
-    const childrenHandler = useChildrenHandler.useChildrenHandler(fragment);
+    const [childrenHandler, fragment] = useChildrenFragment.useChildrenFragment();
     const promises = new watchState.State(new Set());
     const showFallback = new watchState.Cache(() => Boolean(promises.value.size));
     childrenHandler[constants.SUSPENSE] = promises;
+    innet__default["default"]([() => showFallback.value ? fallback : null, fragment], innet.useHandler(), 0, true);
+    innet__default["default"](children, childrenHandler, 0, true);
     new watchState.Watch(() => {
-        fragment.shown = !showFallback.value;
+        fragment.visibility = showFallback.value ? 'hidden' : 'visible';
     });
-    innet__default["default"](fragment, innet.useHandler(), 0, true);
-    innet__default["default"](children, childrenHandler);
-    return () => showFallback.value ? fallback : null;
+    return jsx.EMPTY;
 }
 
 exports.Suspense = Suspense;

@@ -1,6 +1,6 @@
 {
   "name": "@innet/native",
-  "version": "0.0.20-alpha-5",
+  "version": "0.0.20",
   "description": "Tools to build Mobile Application",
   "main": "index.js",
   "module": "index.es6.js",
@@ -61,7 +61,7 @@
   "dependencies": {
     "@innet/jsx": "^2.0.0-rc.3",
     "@innet/utils": "^2.0.3-beta.1",
-    "@nativescript/core": "^9.0.2",
+    "@nativescript/core": "^9.0.4",
     "@watch-state/utils": "^0.0.2",
     "html-classes": "^2.0.2",
     "innet": "^2.0.1",

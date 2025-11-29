@@ -1,30 +1,42 @@
-import {
-  type AbsoluteLayout, type ActionBar, type ActionItem,
-  type ActivityIndicator,
-  type Button,
-  type DatePicker,
-  type DockLayout,
-  type EditableTextBase,
-  type FlexboxLayout,
-  type FormattedString,
-  type Frame,
-  type HtmlView,
-  type Image,
-  type Label, type ListPicker, type ListView, type NavigationButton,
-  type Page,
-  type Placeholder, type Progress,
-  type ProxyViewContainer,
-  type RootLayout, type ScrollView, type SearchBar, type SegmentedBar, type SegmentedBarItem,
-  type Slider,
-  type Span,
-  type StackLayout,
-  type Switch, type TabViewItem,
-  type TextField,
-  type TimePicker,
-  type View,
-  type ViewBase,
-  type WebView,
-  type WrapLayout,
+import type {
+  AbsoluteLayout,
+  ActionBar,
+  ActionItem,
+  ActivityIndicator,
+  Button,
+  DatePicker,
+  DockLayout,
+  EditableTextBase,
+  FlexboxLayout,
+  FormattedString,
+  Frame,
+  HtmlView,
+  Image,
+  Label,
+  ListPicker,
+  ListView,
+  NavigationButton,
+  Page,
+  Placeholder,
+  Progress,
+  ProxyViewContainer,
+  RootLayout,
+  ScrollView,
+  SearchBar,
+  SegmentedBar,
+  SegmentedBarItem,
+  Slider,
+  Span,
+  SplitView,
+  StackLayout,
+  Switch,
+  TabViewItem,
+  TextField,
+  TimePicker,
+  View,
+  ViewBase,
+  WebView,
+  WrapLayout,
 } from '@nativescript/core'
 import { type ContentView } from '@nativescript/core/ui/content-view'
 import { type ContainerView } from '@nativescript/core/ui/core/view'
@@ -537,5 +549,15 @@ T,
 | 'view'
 | 'iconSource'
 | 'textTransform'
+| R
+>
+
+export type SplitViewNSProps<T extends SplitView = SplitView, R extends keyof T = never> = LayoutBaseNSProps<
+T,
+| 'displayMode'
+| 'splitBehavior'
+| 'preferredPrimaryColumnWidthFraction'
+| 'preferredSupplementaryColumnWidthFraction'
+| 'preferredInspectorColumnWidthFraction'
 | R
 >

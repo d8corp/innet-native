@@ -6,5 +6,6 @@ import './before/index.es6.js';
 import './isAnimateParam/index.es6.js';
 import './isAnimateProp/index.es6.js';
 import './setViewEndingAnimate/index.es6.js';
-import './createView/index.es6.js';
 import './onMount/index.es6.js';
+import './getChildren/index.es6.js';
+import './updateChildren/index.es6.js';

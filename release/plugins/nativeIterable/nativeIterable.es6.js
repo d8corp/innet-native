@@ -1,35 +1,30 @@
 import { __awaiter, __asyncValues } from 'tslib';
 import { GenericComponent } from '@innet/jsx';
+import { withScope } from '@watch-state/utils';
 import innet, { useApp, NEXT, useHandler } from 'innet';
 import { queueNanotask } from 'queue-nano-task';
-import { scope, onDestroy, Watch } from 'watch-state';
+import { onDestroy, Watch } from 'watch-state';
 import '../../hooks/index.es6.js';
-import '../../utils/index.es6.js';
-import { Fragment } from '../../utils/views/Fragment/Fragment.es6.js';
-import { useChildrenHandler } from '../../hooks/useChildrenHandler/useChildrenHandler.es6.js';
+import { useChildrenFragment } from '../../hooks/useChildrenFragment/useChildrenFragment.es6.js';
 
 const nativeIterable = () => () => {
     const genericComponent = useApp();
     if (!(genericComponent instanceof GenericComponent))
         return NEXT;
-    const handler = useHandler();
     const { app: apps, data } = genericComponent;
     if (!(data instanceof Promise)) {
-        innet(data.value, handler);
-        queueNanotask(() => genericComponent.app.next());
+        queueNanotask(() => genericComponent.app.next(), 0, true);
+        innet(data.value, useHandler(), 0, true);
         return;
     }
-    const fragment = new Fragment();
-    const childrenHandler = useChildrenHandler(fragment);
-    const { activeWatcher } = scope;
+    const [childrenHandler, fragment] = useChildrenFragment();
     let watcher;
     let deleted = false;
-    innet(fragment, handler, 0, true);
+    innet(fragment, useHandler(), 0, true);
     onDestroy(() => {
         deleted = true;
     });
-    const call = (app) => {
-        scope.activeWatcher = activeWatcher;
+    const call = withScope((app) => {
         if (watcher) {
             watcher.destroy();
             fragment.removeChildren();
@@ -38,10 +33,9 @@ const nativeIterable = () => () => {
             if (update) {
                 fragment.removeChildren();
             }
-            innet(app, childrenHandler);
+            innet(app, childrenHandler, 0, true);
         });
-        scope.activeWatcher = undefined;
-    };
+    });
     const run = () => __awaiter(void 0, void 0, void 0, function* () {
         var _a, e_1, _b, _c;
         try {

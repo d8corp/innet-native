@@ -33,6 +33,7 @@ import type {
   SegmentedBarProps,
   SliderProps,
   SpanProps,
+  SplitViewProps,
   StackLayoutProps,
   SwitchProps,
   TabViewItemProps,
@@ -104,4 +105,5 @@ declare module '@nativescript/core' {
   export interface SegmentedBarItem { props?: SegmentedBarItemProps }
   export interface TabView { props?: TabViewProps }
   export interface TabViewItem { props?: TabViewItemProps }
+  export interface SplitView { props?: SplitViewProps }
 }

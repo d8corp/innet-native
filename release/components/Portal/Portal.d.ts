@@ -3,4 +3,4 @@ export interface PortalProps {
     parent: LayoutBase;
     children: JSX.Element;
 }
-export declare function Portal({ parent, children }: PortalProps): void;
+export declare function Portal({ parent, children }: PortalProps): symbol;

@@ -15,15 +15,14 @@ var innet__default = /*#__PURE__*/_interopDefaultLegacy(innet);
 
 function useNativeChildren(target) {
     const children = jsx.useChildren();
-    if (children) {
-        const handler = innet.useHandler();
-        const childrenHandler = Object.create(handler);
-        if (target instanceof core.Frame) {
-            childrenHandler[constants.PARENT_FRAME] = target;
-        }
-        setParent.setParent(childrenHandler, target);
-        innet__default["default"](children, childrenHandler);
+    if (!children)
+        return;
+    const childrenHandler = innet.useNewHandler();
+    setParent.setParent(childrenHandler, target);
+    if (target instanceof core.Frame) {
+        childrenHandler[constants.PARENT_FRAME] = target;
     }
+    innet__default["default"](children, childrenHandler, 0, true);
 }
 
 exports.useNativeChildren = useNativeChildren;

@@ -1,5 +1,5 @@
 import { Label, TextBase, FormattedString, Span, LayoutBase } from '@nativescript/core';
-import { useApp } from 'innet';
+import innet, { useApp, useHandler } from 'innet';
 import '../../hooks/index.es6.js';
 import { useParent } from '../../hooks/useParent/useParent.es6.js';
 
@@ -8,10 +8,11 @@ function nativeText() {
         var _a;
         const app = useApp();
         const parent = useParent();
+        const handler = useHandler();
         if (typeof parent === 'function') {
             const label = new Label();
             label.text = app;
-            parent(label);
+            innet(label, handler, 0, true);
             return;
         }
         if (parent instanceof TextBase) {
@@ -21,13 +22,13 @@ function nativeText() {
         if (parent instanceof FormattedString) {
             const span = new Span();
             span.text = app;
-            parent.spans.push(span);
+            innet(span, handler, 0, true);
             return;
         }
         if (parent instanceof LayoutBase) {
             const label = new Label();
             label.text = app;
-            parent.addChild(label);
+            innet(label, handler, 0, true);
             return;
         }
         throw Error(`You cannot place a text into ${String(parent)}`);

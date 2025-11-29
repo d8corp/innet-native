@@ -1,17 +1,38 @@
 import { useProps } from '@innet/jsx';
-import { View } from '@nativescript/core';
-import { use, watchValueToValueWatcher } from '@watch-state/utils';
-import innet, { useHandler } from 'innet';
+import { Page, ActionBar, View, TextField, FormattedString, TextView, ActionItem, TabViewItem } from '@nativescript/core';
+import { use, watchValueToValueWatcher, withScope } from '@watch-state/utils';
+import innet, { useNewHandler } from 'innet';
+import { queueNanotask } from 'queue-nano-task';
 import SyncTimer from 'sync-timer';
 import { unwatch, Watch, onDestroy } from 'watch-state';
-import { RENDER_PROPS } from '../../constants.es6.js';
+import { PARENT } from '../../constants.es6.js';
 import '../../utils/index.es6.js';
 import { isAnimateParam } from '../../utils/isAnimateParam/isAnimateParam.es6.js';
 import { setViewEndingAnimate } from '../../utils/setViewEndingAnimate/setViewEndingAnimate.es6.js';
-import { setParent } from '../../utils/setParent/setParent.es6.js';
 import { isAnimateProp } from '../../utils/isAnimateProp/isAnimateProp.es6.js';
 
-function useNativeProps(target, tagName) {
+const RENDER_PROPS = new Map([
+    [Page, {
+            actionBar: ActionBar,
+            content: View,
+        }],
+    [TextField, {
+            formattedText: FormattedString,
+        }],
+    [TextView, {
+            formattedText: FormattedString,
+        }],
+    [ActionBar, {
+            titleView: View,
+        }],
+    [ActionItem, {
+            actionView: View,
+        }],
+    [TabViewItem, {
+            view: View,
+        }],
+]);
+function useNativeProps(target) {
     var _a;
     const props = useProps();
     if (target instanceof View) {
@@ -141,26 +162,33 @@ function useNativeProps(target, tagName) {
             }
             continue;
         }
-        if (tagName && tagName in RENDER_PROPS && key in RENDER_PROPS[tagName]) {
-            const tag = tagName;
-            const tagView = RENDER_PROPS[tag][key];
-            const propHandler = Object.create(useHandler());
-            setParent(propHandler, (view) => {
-                if (view instanceof tagView) {
+        const renderProps = RENDER_PROPS.get(target === null || target === void 0 ? void 0 : target.constructor);
+        if (renderProps && key in renderProps) {
+            const PropView = renderProps[key];
+            const propHandler = useNewHandler();
+            const children = propHandler[PARENT] = [];
+            const render = () => {
+                const view = children[0];
+                if (view instanceof PropView) {
                     // @ts-expect-error TODO: check types
                     target[key] = view;
                     return;
                 }
-                throw Error(`You cannot use ${String(view)} in <${tagName} ${key}={...}>`);
-            });
+                throw Error(`You cannot use ${String(view)} in <${target.constructor.name} ${key}={...}>`);
+            };
             const watchValue = watchValueToValueWatcher(value);
             if (typeof watchValue === 'function') {
                 new Watch((update) => {
-                    innet(use(watchValue, update), propHandler);
+                    const result = watchValue(update);
+                    queueNanotask(withScope(() => {
+                        queueNanotask(render, 1, true);
+                        innet(result, propHandler, 0, true);
+                    }), 0, true);
                 });
                 continue;
             }
-            innet(watchValue, propHandler);
+            queueNanotask(render, 1, true);
+            innet(watchValue, propHandler, 0, true);
             continue;
         }
         if (['ios', 'android'].includes(key)) {

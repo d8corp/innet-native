@@ -6,13 +6,13 @@ var jsx = require('@innet/jsx');
 var core = require('@nativescript/core');
 var utils = require('@watch-state/utils');
 var innet = require('innet');
+var queueNanoTask = require('queue-nano-task');
 var SyncTimer = require('sync-timer');
 var watchState = require('watch-state');
 var constants = require('../../constants.js');
 require('../../utils/index.js');
 var isAnimateParam = require('../../utils/isAnimateParam/isAnimateParam.js');
 var setViewEndingAnimate = require('../../utils/setViewEndingAnimate/setViewEndingAnimate.js');
-var setParent = require('../../utils/setParent/setParent.js');
 var isAnimateProp = require('../../utils/isAnimateProp/isAnimateProp.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -20,7 +20,28 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var innet__default = /*#__PURE__*/_interopDefaultLegacy(innet);
 var SyncTimer__default = /*#__PURE__*/_interopDefaultLegacy(SyncTimer);
 
-function useNativeProps(target, tagName) {
+const RENDER_PROPS = new Map([
+    [core.Page, {
+            actionBar: core.ActionBar,
+            content: core.View,
+        }],
+    [core.TextField, {
+            formattedText: core.FormattedString,
+        }],
+    [core.TextView, {
+            formattedText: core.FormattedString,
+        }],
+    [core.ActionBar, {
+            titleView: core.View,
+        }],
+    [core.ActionItem, {
+            actionView: core.View,
+        }],
+    [core.TabViewItem, {
+            view: core.View,
+        }],
+]);
+function useNativeProps(target) {
     var _a;
     const props = jsx.useProps();
     if (target instanceof core.View) {
@@ -150,26 +171,33 @@ function useNativeProps(target, tagName) {
             }
             continue;
         }
-        if (tagName && tagName in constants.RENDER_PROPS && key in constants.RENDER_PROPS[tagName]) {
-            const tag = tagName;
-            const tagView = constants.RENDER_PROPS[tag][key];
-            const propHandler = Object.create(innet.useHandler());
-            setParent.setParent(propHandler, (view) => {
-                if (view instanceof tagView) {
+        const renderProps = RENDER_PROPS.get(target === null || target === void 0 ? void 0 : target.constructor);
+        if (renderProps && key in renderProps) {
+            const PropView = renderProps[key];
+            const propHandler = innet.useNewHandler();
+            const children = propHandler[constants.PARENT] = [];
+            const render = () => {
+                const view = children[0];
+                if (view instanceof PropView) {
                     // @ts-expect-error TODO: check types
                     target[key] = view;
                     return;
                 }
-                throw Error(`You cannot use ${String(view)} in <${tagName} ${key}={...}>`);
-            });
+                throw Error(`You cannot use ${String(view)} in <${target.constructor.name} ${key}={...}>`);
+            };
             const watchValue = utils.watchValueToValueWatcher(value);
             if (typeof watchValue === 'function') {
                 new watchState.Watch((update) => {
-                    innet__default["default"](utils.use(watchValue, update), propHandler);
+                    const result = watchValue(update);
+                    queueNanoTask.queueNanotask(utils.withScope(() => {
+                        queueNanoTask.queueNanotask(render, 1, true);
+                        innet__default["default"](result, propHandler, 0, true);
+                    }), 0, true);
                 });
                 continue;
             }
-            innet__default["default"](watchValue, propHandler);
+            queueNanoTask.queueNanotask(render, 1, true);
+            innet__default["default"](watchValue, propHandler, 0, true);
             continue;
         }
         if (['ios', 'android'].includes(key)) {
