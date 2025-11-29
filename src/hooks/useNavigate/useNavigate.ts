@@ -1,19 +1,29 @@
 import { type Page } from '@nativescript/core'
 import innet, { useNewHandler } from 'innet'
+import { queueNanotask } from 'queue-nano-task'
 
 import { PARENT_FRAME } from '../../constants'
-import { setParent } from '../../utils'
+import { getChildren, setParent, updateChildren } from '../../utils'
 
 export function useNavigate () {
   const handler = useNewHandler()
   const parentFrame = handler[PARENT_FRAME]
-  setParent(handler, [])
 
   if (!parentFrame) {
     throw new Error('useNavigate must be used in a Frame context')
   }
 
+  setParent(handler, parentFrame)
+
   return (page: Page | JSX.Element) => {
-    innet(page, handler, 1, true)
+    queueNanotask(() => {
+      getChildren(parentFrame).length = 0
+
+      queueNanotask(() => {
+        updateChildren(parentFrame)
+      }, 1, true)
+
+      innet(page, handler, 0, true)
+    }, 0, true)
   }
 }

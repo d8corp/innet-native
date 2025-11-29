@@ -11,11 +11,11 @@ export function useNativeChildren (target: ViewBase) {
   if (!children) return
 
   const childrenHandler = useNewHandler()
+  setParent(childrenHandler, target)
 
   if (target instanceof Frame) {
     childrenHandler[PARENT_FRAME] = target
   }
 
-  setParent(childrenHandler, target)
   innet(children, childrenHandler, 0, true)
 }
