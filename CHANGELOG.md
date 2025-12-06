@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.21 [![08.12.2025](https://img.shields.io/date/1765047691)](https://github.com/d8corp/innet-dom/tree/v0.0.21)
+
+- Fix bugs
+
 ### v0.0.20 [![29.11.2025](https://img.shields.io/date/1764446884)](https://github.com/d8corp/innet-dom/tree/v0.0.20)
 
 - Update dependencies (NativeScript 9)

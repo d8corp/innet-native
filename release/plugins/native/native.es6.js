@@ -1,7 +1,6 @@
-import { View, Application } from '@nativescript/core';
+import { Application, View } from '@nativescript/core';
 import { withScope } from '@watch-state/utils';
 import innet, { HOOK, useApp, useNewHandler, PLUGINS } from 'innet';
-import { queueNanotask } from 'queue-nano-task';
 import { PARENT } from '../../constants.es6.js';
 
 function native(handler) {
@@ -12,20 +11,24 @@ function native(handler) {
         const handler = useNewHandler();
         const children = handler[PARENT] = [];
         handler[PLUGINS] = handler[PLUGINS].filter((plugin) => plugin !== nativePlugin);
-        innet(app, handler);
-        queueNanotask(() => {
-            if (!children.length) {
-                throw Error('No content provided as a root element');
-            }
-            if (children.length > 1) {
-                throw Error('Many content provided as a root element');
-            }
-            const view = children[0];
-            if (!(view instanceof View)) {
-                throw Error(`Unknown view ${String(view)} used as root`);
-            }
-            Application.run({ create: () => view });
-        }, 1);
+        Promise.resolve().then(() => {
+            Application.run({
+                create: () => {
+                    innet(app, handler);
+                    if (!children.length) {
+                        throw Error('No content provided as a root element');
+                    }
+                    if (children.length > 1) {
+                        throw Error('Many content provided as a root element');
+                    }
+                    const view = children[0];
+                    if (!(view instanceof View)) {
+                        throw Error(`Unknown view ${String(view)} used as root`);
+                    }
+                    return view;
+                },
+            });
+        });
     };
     return nativePlugin;
 }
